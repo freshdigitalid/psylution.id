@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Appointment extends BaseModel
+class Appointment extends BaseModel implements AuditableContract
 {
     use Auditable;
 
