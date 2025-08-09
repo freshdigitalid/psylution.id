@@ -16,9 +16,26 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('avatar')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
+        });
+
+        Schema::create('providers', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Link to users table
+            $table->string('provider'); // e.g., 'google', 'github'
+            $table->string('provider_id'); // Provider's unique user ID
+            $table->string('provider_token')->nullable(); // Optional: Store access token
+            $table->string('avatar')->nullable(); // Store provider avatar if available
+            $table->string('name')->nullable(); // Store user name if available
+            $table->string('nickname')->nullable(); // Store user nickname if available
+            $table->string('token')->nullable(); // Store user token if available
+            $table->timestamps();
+
+            $table->unique(['provider', 'provider_id']); // Ensure unique provider-user combination
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -45,5 +62,6 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('providers');
     }
 };
