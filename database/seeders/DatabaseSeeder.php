@@ -22,5 +22,10 @@ class DatabaseSeeder extends Seeder
             PsikologSeeder::class,
             PasienSeeder::class,
         ]);
+
+        // Seed admin
+        $this->call([
+            AdminSeeder::class,
+        ]);
     }
 }
