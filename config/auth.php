@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+        'psikolog' => [
+            'driver' => 'session',
+            'provider' => 'psikologs',
+        ],
+        'pasien' => [
+            'driver' => 'session',
+            'provider' => 'pasiens',
+        ],
     ],
 
     /*
@@ -64,11 +76,18 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'psikologs' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Psikolog::class,
+        ],
+        'pasiens' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Pasien::class,
+        ],
     ],
 
     /*
@@ -94,6 +113,24 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'admin_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'psikologs' => [
+            'provider' => 'psikologs',
+            'table' => 'psikolog_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'pasiens' => [
+            'provider' => 'pasiens',
+            'table' => 'pasien_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

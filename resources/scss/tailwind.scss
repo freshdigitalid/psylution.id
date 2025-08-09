@@ -1,0 +1,30 @@
+/*
+Template Name: Tailwick - Admin & Dashboard Template
+Author: Themesdesign
+Version: 1.1.0
+Website: https://themesdesign.in/
+Contact: Themesdesign@gmail.com
+File: tailwind scss File
+*/
+@import "../../node_modules/choices.js/public/assets/styles/choices.min.css";
+@import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+@import "../../node_modules/leaflet/dist/leaflet.css";
+@import "../../node_modules/swiper/swiper-bundle.css";
+@import "../../node_modules/vanilla-calendar-pro/build/vanilla-calendar.min.css";
+@import "../../node_modules/gridjs/dist/theme/mermaid.min.css";
+@import "../../node_modules/sweetalert2/dist/sweetalert2.css";
+@import "../../node_modules/glightbox/dist/css/glightbox.css";
+
+@import "fonts/fonts";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "plugins/gridjs";
+
+.group\/menu-link:hover,
+.animate {
+   animation-iteration-count: 2;
+   stroke-dasharray: 10;
+}
