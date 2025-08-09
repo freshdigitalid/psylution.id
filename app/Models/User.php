@@ -2,31 +2,34 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\UserRole;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -43,6 +46,32 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => UserRole::class,
         ];
+    }
+
+    /**
+     * Get the panel instance associated with the user.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return (
+            ($this->role === UserRole::Admin && $panel->getId() === 'admin') ||
+            ($this->role === UserRole::Patient && $panel->getId() === 'patient') ||
+            ($this->role === UserRole::Psychologist && $panel->getId() === 'psychologist')
+        );
+    }
+
+    /**
+     * Get the user's social providers.
+     */
+    public function providers()
+    {
+        return $this->hasMany(Provider::class);
+    }
+
+    public function isAuthenticated(): bool
+    {
+        return $this->exists;
     }
 }
