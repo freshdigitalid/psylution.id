@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Patient;
 use App\Models\User;
 use App\Models\Provider;
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class ProviderController extends Controller
         // Store the previous URL to redirect back after login
         session()->put('previous_url', url()->previous());
 
-        return Inertia::location(Socialite::driver($providerValue)->stateless()->redirect()->getTargetUrl());
+        return Socialite::driver($providerValue)->stateless()->redirect();
     }
 
     /**
@@ -73,8 +75,20 @@ class ProviderController extends Controller
                         'email' => $providerUser->getEmail(),
                         'password' => Hash::make(Str::random(24)),
                         'email_verified_at' => now(),
-                        'avatar' => $providerUser->getAvatar()
+                        'avatar' => $providerUser->getAvatar(),
+                        'role' => UserRole::Patient
                     ]);
+
+                    $nameArr = explode(" ", $providerUser->getName());
+
+                    // Create related patient and associate
+                    $patient = Patient::create([
+                        'first_name' => $nameArr[0],
+                        'last_name' => $nameArr[1] ?? null,
+                    ]);
+
+                    $patient->user()->associate($user);
+                    $patient->save();
                 }
 
                 // Create provider record
@@ -103,7 +117,6 @@ class ProviderController extends Controller
             return redirect($previousUrl)->with('success', 'Logged in successfully.');
 
         } catch (\Exception $e) {
-            dd($e);
             DB::rollBack();
             return redirect()->route('welcome')->with('error', 'Authentication failed. Please try again.');
         }
