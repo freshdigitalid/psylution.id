@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use Filament\Pages\Dashboard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -16,7 +19,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('auth.login');
+        return view('auth.login', [
+            'canResetPassword' => Route::has('password.request')
+        ]);
     }
 
     /**
@@ -27,8 +32,21 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+        
+        switch (Auth::user()->role) {
+            case UserRole::Admin:
+                return redirect()->to(Dashboard::getUrl(panel: 'admin'));
 
-        return redirect()->intended(route('dashboard', absolute: false));
+                break;
+            case UserRole::Psychologist:
+                return redirect()->to(Dashboard::getUrl(panel: 'psychologist'));
+
+                break;
+            default:
+                return redirect()->intended(route('dashboard', absolute: false));
+
+                break;
+        }
     }
 
     /**
