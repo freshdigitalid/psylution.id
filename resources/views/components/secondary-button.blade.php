@@ -1,3 +1,5 @@
-<button {{ $attributes->merge(['type' => 'button', 'class' => 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150']) }}>
+@props(['variant' => 'green'])
+
+<button {{ $attributes->merge(['type' => 'button', 'class' => "text-$variant-500 bg-$variant-100 btn hover:text-white hover:bg-$variant-600 focus:text-white focus:bg-$variant-600 focus:ring focus:ring-$variant-100 active:text-white active:bg-$variant-600 active:ring active:ring-$variant-100 dark:bg-$variant-500/20 dark:text-$variant-400 dark:hover:bg-$variant-500 dark:hover:text-white dark:focus:bg-$variant-500 dark:focus:text-white dark:active:bg-$variant-500 dark:active:text-white dark:ring-$variant-400/20"]) }}>
     {{ $slot }}
 </button>
