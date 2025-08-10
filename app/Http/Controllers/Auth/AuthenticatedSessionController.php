@@ -6,46 +6,49 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Filament\Pages\Dashboard;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request): Response
     {
-        return view('auth.login', [
-            'canResetPassword' => Route::has('password.request')
+        return Inertia::render('auth/login', [
+            'canResetPassword' => Route::has('password.request'),
+            'status' => $request->session()->get('status'),
         ]);
     }
 
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): JsonResponse
     {
         $request->authenticate();
 
         $request->session()->regenerate();
-        
+
         switch (Auth::user()->role) {
             case UserRole::Admin:
-                return redirect()->to(Dashboard::getUrl(panel: 'admin'));
-
-                break;
+                return response()->json([
+                    'redirect' => Dashboard::getUrl(panel: 'admin'),
+                ]);
             case UserRole::Psychologist:
-                return redirect()->to(Dashboard::getUrl(panel: 'psychologist'));
-
-                break;
+                return response()->json([
+                    'redirect' => Dashboard::getUrl(panel: 'psychologist'),
+                ]);
             default:
-                return redirect()->intended(route('dashboard', absolute: false));
-
-                break;
+                return response()->json([
+                    'redirect' => Dashboard::getUrl(panel: 'patient'),
+                ]);
         }
     }
 

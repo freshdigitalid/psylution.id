@@ -2,7 +2,7 @@
 
 namespace App\Providers\Filament;
 
-use App\Http\Middleware\RedirectToProperPanelMiddleware;
+use App\Http\Middleware\RedirectToFilamentDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -51,7 +51,7 @@ class PsychologistPanelPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                RedirectToProperPanelMiddleware::class,
+                RedirectToFilamentDashboard::class,
                 Authenticate::class,
             ]);
     }
