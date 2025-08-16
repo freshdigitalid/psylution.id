@@ -28,7 +28,7 @@ class ProviderController extends Controller
 
         // Validate the provider to ensure it's supported
         if (!in_array($providerValue, ['google'])) {
-            return redirect()->route('welcome')->with('error', 'Unsupported provider.');
+            return redirect()->route('home')->with('error', 'Unsupported provider.');
         }
 
         // Store the previous URL to redirect back after login
@@ -48,10 +48,10 @@ class ProviderController extends Controller
         $providerValue = $request->provider;
 
         if (!in_array($providerValue, ['google'])) {
-            return redirect()->route('welcome')->with('error', 'Unsupported provider.');
+            return redirect()->route('home')->with('error', 'Unsupported provider.');
         }
 
-        $previousUrl = $request->session()->pull('previous_url', route('welcome'));
+        $previousUrl = $request->session()->pull('previous_url', route('home'));
         $providerUser = Socialite::driver($providerValue)->stateless()->user();
         
         try {
@@ -118,7 +118,7 @@ class ProviderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('welcome')->with('error', 'Authentication failed. Please try again.');
+            return redirect()->route('home')->with('error', 'Authentication failed. Please try again.');
         }
     }
 }
