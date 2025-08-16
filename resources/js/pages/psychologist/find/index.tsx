@@ -12,7 +12,7 @@ export default function PsychologistSchedule() {
 
     return (
         <Layout>
-            <div className="flex max-w-screen-xl mx-auto gap-4 py-20 px-6 xl:px-0 min-h">
+            <div className="flex max-w-screen-xl mx-auto gap-4 py-20 px-6 xl:px-0">
                 {/* Sidebar */}
                 <aside className="w-64 space-y-4">
                     <Card className="p-4">
