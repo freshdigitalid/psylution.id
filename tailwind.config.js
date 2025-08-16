@@ -10,45 +10,45 @@ export default {
     theme: {
         extend: {
             colors: {
-                background: "hsl(var(--background))",
-                foreground: "hsl(var(--foreground))",
+                background: "#FFFFFF",
+                foreground: "#111827", // dark gray/black text
                 card: {
-                    DEFAULT: "hsl(var(--card))",
-                    foreground: "hsl(var(--card-foreground))",
+                    DEFAULT: "#FFFFFF",
+                    foreground: "#111827",
                 },
                 popover: {
-                    DEFAULT: "hsl(var(--popover))",
-                    foreground: "hsl(var(--popover-foreground))",
+                    DEFAULT: "#FFFFFF",
+                    foreground: "#111827",
                 },
                 primary: {
-                    DEFAULT: "hsl(var(--primary))",
-                    foreground: "hsl(var(--primary-foreground))",
+                    DEFAULT: "#3B82F6", // bright blue (buttons, active elements)
+                    foreground: "#FFFFFF", // white text on primary
                 },
                 secondary: {
-                    DEFAULT: "hsl(var(--secondary))",
-                    foreground: "hsl(var(--secondary-foreground))",
+                    DEFAULT: "#4A6CF7", // darker sidebar/footer blue
+                    foreground: "#FFFFFF",
                 },
                 muted: {
-                    DEFAULT: "hsl(var(--muted))",
-                    foreground: "hsl(var(--muted-foreground))",
+                    DEFAULT: "#F3F4F6", // light gray background
+                    foreground: "#6B7280", // muted text
                 },
                 accent: {
-                    DEFAULT: "hsl(var(--accent))",
-                    foreground: "hsl(var(--accent-foreground))",
+                    DEFAULT: "#E0EDFF", // very light blue (hover, highlights)
+                    foreground: "#111827",
                 },
                 destructive: {
-                    DEFAULT: "hsl(var(--destructive))",
-                    foreground: "hsl(var(--destructive-foreground))",
+                    DEFAULT: "#EF4444", // red for errors/danger
+                    foreground: "#FFFFFF",
                 },
-                border: "hsl(var(--border))",
-                input: "hsl(var(--input))",
-                ring: "hsl(var(--ring))",
+                border: "#D1D5DB", // light gray border
+                input: "#E5E7EB", // input field background
+                ring: "#3B82F6", // focus ring blue
                 chart: {
-                    "1": "hsl(var(--chart-1))",
-                    "2": "hsl(var(--chart-2))",
-                    "3": "hsl(var(--chart-3))",
-                    "4": "hsl(var(--chart-4))",
-                    "5": "hsl(var(--chart-5))",
+                    "1": "#3B82F6",
+                    "2": "#4A6CF7",
+                    "3": "#E0EDFF",
+                    "4": "#6B7280",
+                    "5": "#EF4444",
                 },
             },
             borderRadius: {
