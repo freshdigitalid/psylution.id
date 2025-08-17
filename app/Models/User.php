@@ -69,9 +69,12 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Provider::class);
     }
-
-    public function isAuthenticated(): bool
+    
+    /**
+     * Get the user's person profile.
+     */
+    public function person()
     {
-        return $this->exists;
+        return $this->hasOne(Person::class);
     }
 }
