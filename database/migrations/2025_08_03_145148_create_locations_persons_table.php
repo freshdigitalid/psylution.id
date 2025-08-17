@@ -14,13 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('locations_persons', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            
             $table->uuid('person_id');
             $table->foreign('person_id')->references('id')->on('persons')->onDelete('cascade');
 
             $table->uuid('location_id');
             $table->foreign('location_id')->references('id')->on('locations')->onDelete('cascade');
+
+            $table->primary(['person_id', 'location_id']);
         });
     }
 

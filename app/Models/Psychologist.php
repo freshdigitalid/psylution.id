@@ -15,6 +15,6 @@ class Psychologist extends Person
 
     public function specializations()
     {
-        return $this->belongsToMany(Person::class, 'psychologists_specializations', 'psychologist_id', 'specialization_id');
+        return $this->belongsToMany(Specialization::class, 'psychologists_specializations', 'psychologist_id', 'specialization_id');
     }
 }

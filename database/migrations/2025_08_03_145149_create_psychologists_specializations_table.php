@@ -14,13 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('psychologists_specializations', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            
             $table->uuid('psychologist_id');
             $table->foreign('psychologist_id')->references('id')->on('persons')->onDelete('cascade');
 
             $table->uuid('specialization_id');
             $table->foreign('specialization_id')->references('id')->on('specializations')->onDelete('cascade');
+
+            $table->primary(['psychologist_id', 'specialization_id']);
         });
     }
 

@@ -12,6 +12,6 @@ class Specialization extends BaseModel
 
     public function psychologists()
     {
-        return $this->belongsToMany(Person::class, 'psychologists_specializations', 'specialization_id', 'psychologist_id');
+        return $this->belongsToMany(Psychologist::class, 'psychologists_specializations', 'specialization_id', 'psychologist_id');
     }
 }
