@@ -49,7 +49,7 @@ class AuthenticatedSessionController extends Controller
                 ]);
             default:
                 return response()->json([
-                    'redirect' => Dashboard::getUrl(panel: 'patient'),
+                    'redirect' => route('home'),
                 ]);
         }
     }
