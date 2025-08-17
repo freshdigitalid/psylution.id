@@ -1,19 +1,19 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { usePage } from "@inertiajs/react";
-import { SharedData } from "@/types";
-import { useState } from "react";
-import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { SharedData, User } from '@/types';
+import { usePage } from '@inertiajs/react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const ProfilePage = () => {
     const { auth } = usePage<SharedData>().props;
-    const user = auth.user;
+    const user = auth.user as User;
 
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
@@ -24,15 +24,15 @@ const ProfilePage = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
     };
 
     const handleSave = () => {
         // TODO: Implement save functionality
-        toast.success("Profile updated successfully!");
+        toast.success('Profile updated successfully!');
         setIsEditing(false);
     };
 
@@ -48,7 +48,7 @@ const ProfilePage = () => {
     const getInitials = (name: string) => {
         return name
             .split(' ')
-            .map(word => word.charAt(0))
+            .map((word) => word.charAt(0))
             .join('')
             .toUpperCase()
             .slice(0, 2);
@@ -57,15 +57,11 @@ const ProfilePage = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
             <div className="container mx-auto px-4 py-8">
-                <div className="max-w-4xl mx-auto space-y-8">
+                <div className="mx-auto max-w-4xl space-y-8">
                     {/* Header */}
                     <div className="text-center">
-                        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                            My Profile
-                        </h1>
-                        <p className="text-gray-600 dark:text-gray-400">
-                            Manage your account settings and preferences
-                        </p>
+                        <h1 className="mb-2 text-3xl font-bold text-gray-900 dark:text-white">My Profile</h1>
+                        <p className="text-gray-600 dark:text-gray-400">Manage your account settings and preferences</p>
                     </div>
 
                     <Tabs defaultValue="profile" className="space-y-6">
@@ -79,18 +75,14 @@ const ProfilePage = () => {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Personal Information</CardTitle>
-                                    <CardDescription>
-                                        Update your personal information and profile picture
-                                    </CardDescription>
+                                    <CardDescription>Update your personal information and profile picture</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     {/* Avatar Section */}
                                     <div className="flex items-center space-x-6">
                                         <Avatar className="h-24 w-24">
                                             <AvatarImage src={formData.avatar} alt={user?.name} />
-                                            <AvatarFallback className="text-lg">
-                                                {getInitials(user?.name || '')}
-                                            </AvatarFallback>
+                                            <AvatarFallback className="text-lg">{getInitials(user?.name || '')}</AvatarFallback>
                                         </Avatar>
                                         <div className="space-y-2">
                                             <h3 className="text-lg font-medium">{user?.name}</h3>
@@ -106,7 +98,7 @@ const ProfilePage = () => {
                                     <Separator />
 
                                     {/* Form Fields */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                         <div className="space-y-2">
                                             <Label htmlFor="name">Full Name</Label>
                                             <Input
@@ -148,17 +140,13 @@ const ProfilePage = () => {
                                     {/* Action Buttons */}
                                     <div className="flex justify-end space-x-3">
                                         {!isEditing ? (
-                                            <Button onClick={() => setIsEditing(true)}>
-                                                Edit Profile
-                                            </Button>
+                                            <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
                                         ) : (
                                             <>
                                                 <Button variant="outline" onClick={handleCancel}>
                                                     Cancel
                                                 </Button>
-                                                <Button onClick={handleSave}>
-                                                    Save Changes
-                                                </Button>
+                                                <Button onClick={handleSave}>Save Changes</Button>
                                             </>
                                         )}
                                     </div>
@@ -170,37 +158,23 @@ const ProfilePage = () => {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Security Settings</CardTitle>
-                                    <CardDescription>
-                                        Manage your password and security preferences
-                                    </CardDescription>
+                                    <CardDescription>Manage your password and security preferences</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="space-y-4">
                                         <div className="space-y-2">
                                             <Label htmlFor="current-password">Current Password</Label>
-                                            <Input
-                                                id="current-password"
-                                                type="password"
-                                                placeholder="Enter current password"
-                                            />
+                                            <Input id="current-password" type="password" placeholder="Enter current password" />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="new-password">New Password</Label>
-                                            <Input
-                                                id="new-password"
-                                                type="password"
-                                                placeholder="Enter new password"
-                                            />
+                                            <Input id="new-password" type="password" placeholder="Enter new password" />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="confirm-password">Confirm New Password</Label>
-                                            <Input
-                                                id="confirm-password"
-                                                type="password"
-                                                placeholder="Confirm new password"
-                                            />
+                                            <Input id="confirm-password" type="password" placeholder="Confirm new password" />
                                         </div>
 
                                         <Button>Update Password</Button>
@@ -213,9 +187,7 @@ const ProfilePage = () => {
                             <Card>
                                 <CardHeader>
                                     <CardTitle>Preferences</CardTitle>
-                                    <CardDescription>
-                                        Customize your experience and notification settings
-                                    </CardDescription>
+                                    <CardDescription>Customize your experience and notification settings</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
                                     <div className="space-y-4">
@@ -236,9 +208,7 @@ const ProfilePage = () => {
                                         <div className="flex items-center justify-between">
                                             <div>
                                                 <h4 className="font-medium">Appointment Reminders</h4>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Get reminded about upcoming appointments
-                                                </p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">Get reminded about upcoming appointments</p>
                                             </div>
                                             <Button variant="outline" size="sm">
                                                 Configure
@@ -250,9 +220,7 @@ const ProfilePage = () => {
                                         <div className="flex items-center justify-between">
                                             <div>
                                                 <h4 className="font-medium">Privacy Settings</h4>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                    Manage your privacy and data preferences
-                                                </p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">Manage your privacy and data preferences</p>
                                             </div>
                                             <Button variant="outline" size="sm">
                                                 Configure
@@ -269,4 +237,4 @@ const ProfilePage = () => {
     );
 };
 
-export default ProfilePage; 
+export default ProfilePage;
