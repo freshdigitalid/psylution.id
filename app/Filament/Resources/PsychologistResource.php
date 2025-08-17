@@ -34,6 +34,11 @@ class PsychologistResource extends Resource
                       ->label('Last Name')
                       ->placeholder('Last Name')
                       ->required(),
+
+                    Forms\Components\RichEditor::make('description')
+                      ->disableToolbarButtons([
+                            'attachFiles',
+                      ]),
                       
                     Forms\Components\Select::make('locations')
                         ->multiple()
@@ -43,7 +48,17 @@ class PsychologistResource extends Resource
                     Forms\Components\Select::make('specializations')
                         ->multiple()
                         ->relationship('specializations', 'specialization_name')
-                        ->preload()
+                        ->preload(),
+                    
+                    Forms\Components\RichEditor::make('education')
+                        ->toolbarButtons([
+                            'bulletList'
+                        ]),
+
+                    Forms\Components\RichEditor::make('experience')
+                        ->toolbarButtons([
+                            'bulletList'
+                        ]),
                 ])
         ]);
     }

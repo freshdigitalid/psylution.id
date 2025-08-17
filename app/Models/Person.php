@@ -19,6 +19,17 @@ class Person extends BaseModel implements AuditableContract
     ];
 
     /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'deleted_at',
+        'user_id',
+        'type'
+    ];
+
+    /**
      * Get the user's full name.
      *
      * @return string

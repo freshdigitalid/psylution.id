@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PsychologistController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -7,13 +8,11 @@ Route::get('/', function () {
     return Inertia::render('home/index');
 })->name('home');
 
-Route::get('/cari-psikolog', function () {
-    return Inertia::render('psychologist/find/index');
-})->name('psychologist.find');
+Route::get('/cari-psikolog', [PsychologistController::class, 'index'])
+    ->name('psychologist.find');
 
-Route::get('/psikolog', function () {
-    return Inertia::render('psychologist/detail/index');
-})->name('psychologist.detail');
+Route::get('/psikolog/{id}', [PsychologistController::class, 'show'])
+    ->name('psychologist.detail');
 
 Route::get('/psikolog-terbaik', function () {
     return Inertia::render('psychologist/best/index');
