@@ -6,9 +6,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/layouts/layout";
+import { Link, usePage } from "@inertiajs/react";
+
+interface Psychologist {
+    id: string;
+    first_name: string;
+    last_name: string;
+    education: string;
+    experience: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
 
 export default function PsychologistSchedule() {
     const [sort, setSort] = useState("default");
+    const { props: { psychologists } }: { props: { psychologists: Psychologist[] } } = usePage();
 
     return (
         <Layout>
@@ -60,18 +73,22 @@ export default function PsychologistSchedule() {
 
                     {/* Cards */}
                     <div className="space-y-4">
-                        {Array.from({ length: 4 }).map((_, i) => (
+                        {psychologists.map((x, i) => (
                             <Card key={i} className="p-4 flex justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-full bg-blue-200" />
                                     <div>
+                                        <h3 className="font-bold text-lg">{x.first_name} {x.last_name}</h3>
                                         <span className="text-xs px-2 py-1 bg-gray-200 rounded-full">Kategori</span>
-                                        <h3 className="font-bold text-lg">Lorem Ipsum</h3>
                                         <p className="text-sm text-gray-600">Jumlah Sesi • Ulasan • Pengalaman</p>
                                         <p className="text-sm text-blue-600">Jadwal Tersedia</p>
                                     </div>
                                 </div>
-                                <Button>Booking Sesi</Button>
+                                <Button asChild>
+                                    <Link href={route('psychologist.detail', { id: x.id })}>
+                                        <a className="text-sm">Booking Sesi</a>
+                                    </Link>
+                                </Button>
                             </Card>
                         ))}
                     </div>

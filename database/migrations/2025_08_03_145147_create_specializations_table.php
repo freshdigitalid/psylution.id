@@ -13,15 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('persons', function (Blueprint $table) {
+        Schema::create('specializations', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); 
-            $table->string('first_name');
-            $table->string('last_name')->nullable();
-            $table->text('description')->nullable();
-            $table->text('experience')->nullable();
-            $table->text('education')->nullable();
-            $table->string('type');
+            $table->string('specialization_name')->required();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -34,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('persons');
+        Schema::dropIfExists('specializations');
     }
 };
