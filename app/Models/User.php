@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +22,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'role'
+        'role_id'
     ];
 
     /**
@@ -46,7 +45,6 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class,
         ];
     }
 
@@ -56,10 +54,18 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return (
-            ($this->role === UserRole::Admin && $panel->getId() === 'admin') ||
-            ($this->role === UserRole::Patient && $panel->getId() === 'patient') ||
-            ($this->role === UserRole::Psychologist && $panel->getId() === 'psychologist')
+            ($this->role->name === 'admin' && $panel->getId() === 'admin') ||
+            ($this->role->name === 'patient' && $panel->getId() === 'patient') ||
+            ($this->role->name === 'psychologist' && $panel->getId() === 'psychologist')
         );
+    }
+
+    /**
+     * Get the user's role.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 
     /**
