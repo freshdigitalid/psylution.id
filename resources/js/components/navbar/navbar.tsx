@@ -86,9 +86,6 @@ const Navbar = () => {
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem asChild>
-                                        <Link href={route('profile')}>Profile</Link>
-                                    </DropdownMenuItem>
 
                                     {/* Show Dashboard link only for admin and psychologist */}
                                     {(user.role?.name === 'admin' || user.role?.name === 'psychologist') && (

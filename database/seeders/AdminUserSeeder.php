@@ -29,7 +29,7 @@ class AdminUserSeeder extends Seeder
             'email' => 'superadmin@psylution.id',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => UserRole::Admin,
+            'role' => UserRole::Admin,
         ]);
 
         $this->command->info('Admin users seeded successfully!');
