@@ -7,17 +7,28 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProfileController extends Controller
 {
     /**
+     * Display the user's profile.
+     */
+    public function show(Request $request): Response
+    {
+        return Inertia::render('auth/profile', [
+            'user' => $request->user()->load('role'),
+        ]);
+    }
+
+    /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request): Response
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
+        return Inertia::render('auth/profile', [
+            'user' => $request->user()->load('role'),
         ]);
     }
 
@@ -34,7 +45,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile')->with('status', 'profile-updated');
     }
 
     /**
