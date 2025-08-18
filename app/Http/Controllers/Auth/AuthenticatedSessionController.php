@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Filament\Pages\Dashboard;
@@ -35,21 +36,18 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // Get user with role relationship
-        $user = Auth::user()->load('role');
-
-        switch ($user->role->name) {
-            case 'admin':
+        switch (Auth::user()->role) {
+            case UserRole::Admin:
                 return response()->json([
                     'redirect' => Dashboard::getUrl(panel: 'admin'),
                 ]);
-            case 'psychologist':
+            case UserRole::Psychologist:
                 return response()->json([
                     'redirect' => Dashboard::getUrl(panel: 'psychologist'),
                 ]);
             default:
                 return response()->json([
-                    'redirect' => route('home'),
+                    'redirect' => Dashboard::getUrl(panel: 'patient'),
                 ]);
         }
     }

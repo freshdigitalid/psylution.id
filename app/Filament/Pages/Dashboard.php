@@ -2,8 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\User;
-use App\Models\Role;
 use Filament\Pages\Dashboard as BaseDashboard;
 use App\Filament\Widgets\DashboardStats;
 

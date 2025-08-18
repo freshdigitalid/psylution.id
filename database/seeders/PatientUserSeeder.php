@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -14,21 +14,13 @@ class PatientUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get patient role
-        $patientRole = Role::where('name', 'patient')->first();
-
-        if (!$patientRole) {
-            $this->command->error('Patient role not found. Please run RoleSeeder first.');
-            return;
-        }
-
         // Create sample patient users
         User::create([
             'name' => 'John Doe',
             'email' => 'john.doe@example.com',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => $patientRole->id,
+            'role' => UserRole::Patient,
         ]);
 
         User::create([
@@ -36,7 +28,7 @@ class PatientUserSeeder extends Seeder
             'email' => 'jane.smith@example.com',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => $patientRole->id,
+            'role' => UserRole::Patient,
         ]);
 
         User::create([
@@ -44,7 +36,7 @@ class PatientUserSeeder extends Seeder
             'email' => 'patient@psylution.id',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => $patientRole->id,
+            'role' => UserRole::Patient,
         ]);
 
         $this->command->info('Patient users seeded successfully!');
