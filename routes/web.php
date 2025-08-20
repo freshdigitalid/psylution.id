@@ -14,6 +14,10 @@ Route::get('/cari-psikolog', [PsychologistController::class, 'index'])
 Route::get('/psikolog/{id}', [PsychologistController::class, 'show'])
     ->name('psychologist.detail');
 
+Route::get('/booking', function () {
+    return Inertia::render('psychologist/book/index');
+})->name('psychologist.book');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [Controller::class, 'dashboard'])
