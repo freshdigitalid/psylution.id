@@ -9,11 +9,6 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
-<<<<<<< HEAD
-use App\Filament\Pages\Dashboard;
-use App\Filament\Widgets\DashboardStats;
-=======
->>>>>>> 68bb957d494db001d0d34f412b98cc6393a42fd0
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -41,10 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
-<<<<<<< HEAD
-=======
                 Profile::class,
->>>>>>> 68bb957d494db001d0d34f412b98cc6393a42fd0
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
