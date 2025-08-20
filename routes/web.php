@@ -14,10 +14,6 @@ Route::get('/cari-psikolog', [PsychologistController::class, 'index'])
 Route::get('/psikolog/{id}', [PsychologistController::class, 'show'])
     ->name('psychologist.detail');
 
-Route::get('/psikolog-terbaik', function () {
-    return Inertia::render('psychologist/best/index');
-})->name('psychologist.best');
-
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [Controller::class, 'dashboard'])
@@ -26,6 +22,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [Controller::class, 'profile'])
         ->name('profile');
 
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/psikolog-terbaik', function () {
+            return Inertia::render('psychologist/best/index');
+        })->name('psychologist.best');
+    });
 });
 
 require __DIR__ . '/auth.php';
