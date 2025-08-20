@@ -6,7 +6,7 @@ import Layout from "@/layouts/layout";
 export default function BestPsychologist() {
     return (
         <Layout>
-            <div className="max-w-screen-xl mx-auto px-6 xl:px-0 py-20 space-y-8">
+            <div className="max-w-screen-xl mx-auto px-6 xl:px-0 space-y-8">
                 {/* Best Psychologists Section */}
                 <section>
                     <Card className="p-6 bg-blue-50 border-blue-200 space-y-6">

@@ -31,7 +31,7 @@ export default function PsychologistDetail() {
 
     return (
         <Layout>
-            <div className="max-w-screen-xl mx-auto px-6 xl:px-0 py-20 space-y-6">
+            <div className="max-w-screen-xl mx-auto px-6 xl:px-0 space-y-6">
                 {/* Header Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Left Card */}
