@@ -13,6 +13,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -31,10 +32,18 @@ class PatientPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->darkMode(false)
+            ->maxContentWidth(MaxWidth::Full)
+            ->brandName('Psylution')
             ->discoverResources(in: app_path('Filament/PatientPanel/Resources'), for: 'App\\Filament\\PatientPanel\\Resources')
             ->discoverPages(in: app_path('Filament/PatientPanel/Pages'), for: 'App\\Filament\\PatientPanel\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                \App\Filament\PatientPanel\Pages\Dashboard::class,
+                \App\Filament\PatientPanel\Pages\Appointments::class,
+                \App\Filament\PatientPanel\Pages\Patients::class,
+                \App\Filament\PatientPanel\Pages\Messages::class,
+                \App\Filament\PatientPanel\Pages\Reports::class,
+                \App\Filament\PatientPanel\Pages\Settings::class,
                 Profile::class,
             ])
             ->discoverWidgets(in: app_path('Filament/PatientPanel/Widgets'), for: 'App\\Filament\\PatientPanel\\Widgets')

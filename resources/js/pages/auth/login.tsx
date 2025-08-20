@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from '@/components/ui/checkbox';
 import axios from 'axios';
 
 type LoginForm = {
@@ -16,9 +17,9 @@ type LoginForm = {
 
 // Logo component untuk Psylution
 const AppLogoIcon = ({ className }: { className?: string }) => (
-    <img 
-        src="/public/logo.png" 
-        alt="Psylution Logo" 
+    <img
+        src="/logo/logo.png"
+        alt="Psylution Logo"
         className={className}
     />
 );
@@ -39,35 +40,49 @@ export default function Login() {
     };
 
     return (
-        <div className="h-screen flex items-center justify-center">
-            <div className="w-full h-full grid lg:grid-cols-2">
-                <div className="max-w-xs m-auto w-full flex flex-col items-center">
-                    <Link href="/" className="flex flex-col items-center gap-2 font-medium">
-                        <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                            <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
-                        </div>
-                        <span className="sr-only">Log in to Psylution</span>
-                    </Link>
-                    <p className="mt-4 text-xl font-bold tracking-tight">
-                        Log in to Psylution
+        <div className="min-h-screen w-full grid lg:grid-cols-2">
+            {/* Left info panel */}
+            <div className="hidden lg:flex flex-col justify-between p-8 bg-[#CADFFE]">
+                <div className="flex items-center gap-3">
+                    <AppLogoIcon className="h-50 w-50" />
+                </div>
+                <div className="px-8">
+                    <h2 className="text-4xl font-extrabold tracking-tight text-[#1E2547]">Lorem Ipsum</h2>
+                    <p className="mt-4 text-sm leading-6 text-[#1E2547]/80">
+                        Lorem ipsum dolor sit amet consectetur. Aliquet bibendum fringilla cras nisl commodo sit facilisi massa euismod.
                     </p>
-                    <Button asChild>
-                        <a href="/auth/google" className="mt-8 w-full gap-3">
+                </div>
+                <div className="px-8 pb-4">
+                    <p className="text-sm text-[#1E2547]/80">Don&apos;t have an account?</p>
+                    <Link href="/register">
+                        <Button variant="outline" className="mt-3 rounded-full border-[#5274FF] text-[#5274FF] hover:bg-[#5274FF]/10">
+                            Sign Up
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+
+            {/* Right form panel */}
+            <div className="flex items-center justify-center py-10">
+                <div className="w-full max-w-md px-8">
+                    <p className="text-2xl font-extrabold text-[#1E2547]">Log In</p>
+
+                    <Button asChild className="mt-8 w-full gap-3">
+                        <a href="/auth/google">
                             <GoogleLogo />
                             Continue with Google
                         </a>
                     </Button>
+
                     <div className="my-7 w-full flex items-center justify-center overflow-hidden">
                         <Separator />
                         <span className="text-sm px-2">OR</span>
                         <Separator />
                     </div>
-                    <form
-                        className="w-full space-y-4" 
-                        onSubmit={submit}
-                    >
+
+                    <form className="w-full space-y-4" onSubmit={submit}>
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
+                            <Label htmlFor="email">Email</Label>
                             <Input
                                 className="w-full"
                                 id="email"
@@ -96,27 +111,29 @@ export default function Login() {
                             />
                             <InputError message={errors.password} />
                         </div>
-                        <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing}>
+
+                        <div className="mt-2 flex items-center justify-between">
+                            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Checkbox
+                                    checked={data.remember}
+                                    onCheckedChange={(checked) => setData('remember', Boolean(checked))}
+                                    aria-label="Keep me logged in"
+                                />
+                                <span>Keep me logged in</span>
+                            </label>
+                            <Link href="/forgot-password" className="text-sm text-[#5274FF] hover:underline">
+                                Forgot password?
+                            </Link>
+                        </div>
+
+                        <Button type="submit" className="mt-6 w-full bg-[#5274FF] hover:bg-[#4666f0]" tabIndex={4} disabled={processing}>
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Continue with Email
+                            Log In
                         </Button>
                     </form>
-                    <div className="mt-5 space-y-5">
-                        <Link
-                            href="/forgot-password"
-                            className="text-sm block underline text-muted-foreground text-center"
-                        >
-                            Forgot your password?
-                        </Link>
-                        <p className="text-sm text-center">
-                            Don&apos;t have an account?
-                            <Link href="/register" className="ml-1 underline text-muted-foreground">
-                                Create account
-                            </Link>
-                        </p>
-                    </div>
+
+                    <p className="mt-8 text-center text-sm text-muted-foreground">Or, use social media to sign in</p>
                 </div>
-                <div className="bg-muted hidden lg:block" />
             </div>
         </div>
     );

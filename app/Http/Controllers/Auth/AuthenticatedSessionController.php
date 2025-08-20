@@ -45,9 +45,13 @@ class AuthenticatedSessionController extends Controller
                 return response()->json([
                     'redirect' => Dashboard::getUrl(panel: 'psychologist'),
                 ]);
+            case UserRole::Patient:
+                return response()->json([
+                    'redirect' => route('home'),
+                ]);
             default:
                 return response()->json([
-                    'redirect' => Dashboard::getUrl(panel: 'patient'),
+                    'redirect' => route('home'),
                 ]);
         }
     }
