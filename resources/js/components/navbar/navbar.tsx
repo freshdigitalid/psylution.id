@@ -20,19 +20,8 @@ const Navbar = () => {
     const { auth } = usePage<SharedData>().props;
     const user = auth.user as User | null;
 
-    function openDashboard(role: string) {
-        // Redirect to the appropriate dashboard based on user role
-        switch (role) {
-            case 'admin':
-                window.location.href = route('filament.admin.pages.dashboard');
-                break;
-            case 'psychologist':
-                window.location.href = route('filament.psychologist.pages.dashboard');
-                break;
-            default:
-                window.location.href = route('filament.patient.pages.dashboard');
-                break;
-        }
+    function openRoute(routeName: string) {
+        window.location.href = route(routeName);
     }
 
     const getInitials = (name: string) => {
@@ -58,7 +47,7 @@ const Navbar = () => {
                             {/* Show Dashboard button only for admin and psychologist */}
                             {(user.role?.name === 'admin' || user.role?.name === 'psychologist') && (
                                 <Button
-                                    onClick={() => openDashboard(user.role?.name as string)}
+                                    onClick={() => openRoute('dashboard')}
                                     variant={'outline'}
                                     className="hidden sm:inline-flex"
                                 >
@@ -86,15 +75,17 @@ const Navbar = () => {
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem asChild>
-                                        <Link href={route('profile')}>Profile</Link>
-                                    </DropdownMenuItem>
 
-                                    {/* Show Dashboard link only for admin and psychologist */}
-                                    {(user.role?.name === 'admin' || user.role?.name === 'psychologist') && (
-                                        <DropdownMenuItem asChild>
-                                            <Link href={route('filament.patient.pages.dashboard')}>Dashboard</Link>
-                                        </DropdownMenuItem>
+                                    {user && (
+                                        <>
+                                            <DropdownMenuItem onClick={() => openRoute('dashboard')}>
+                                                Dashboard
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => openRoute('profile')}>
+                                                Profile
+                                            </DropdownMenuItem>
+                                        </>
                                     )}
 
                                     <DropdownMenuSeparator />

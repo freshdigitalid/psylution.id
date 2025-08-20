@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -14,21 +14,13 @@ class PsychologistUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get psychologist role
-        $psychologistRole = Role::where('name', 'psychologist')->first();
-
-        if (!$psychologistRole) {
-            $this->command->error('Psychologist role not found. Please run RoleSeeder first.');
-            return;
-        }
-
         // Create sample psychologist users
         User::create([
             'name' => 'Dr. Sarah Johnson',
             'email' => 'sarah.johnson@psylution.id',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => $psychologistRole->id,
+            'role' => UserRole::Psychologist,
         ]);
 
         User::create([
@@ -36,7 +28,7 @@ class PsychologistUserSeeder extends Seeder
             'email' => 'michael.chen@psylution.id',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => $psychologistRole->id,
+            'role' => UserRole::Psychologist,
         ]);
 
         User::create([
@@ -44,7 +36,7 @@ class PsychologistUserSeeder extends Seeder
             'email' => 'psychologist@psylution.id',
             'password' => Hash::make('password'),
             'email_verified_at' => now(),
-            'role_id' => $psychologistRole->id,
+            'role' => UserRole::Psychologist,
         ]);
 
         $this->command->info('Psychologist users seeded successfully!');

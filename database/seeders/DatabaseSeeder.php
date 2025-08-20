@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
     {
         // Call specific seeders for different user roles
         $this->call([
-            RoleSeeder::class, // Must be called first to create roles
             AdminUserSeeder::class,
             PatientUserSeeder::class,
             PsychologistUserSeeder::class,

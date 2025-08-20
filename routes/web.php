@@ -1,13 +1,12 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\PsychologistController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\ProfileController;
 
-Route::get('/', function () {
-    return Inertia::render('home/index');
-})->name('home');
+Route::get('/', [Controller::class, 'home'])
+    ->name('home');
 
 Route::get('/cari-psikolog', [PsychologistController::class, 'index'])
     ->name('psychologist.find');
@@ -19,11 +18,14 @@ Route::get('/psikolog-terbaik', function () {
     return Inertia::render('psychologist/best/index');
 })->name('psychologist.best');
 
-// Profile route for authenticated users
-Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [Controller::class, 'dashboard'])
+        ->name('dashboard');
+
+    Route::get('/profile', [Controller::class, 'profile'])
+        ->name('profile');
+
 });
 
-require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

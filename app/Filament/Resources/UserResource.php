@@ -2,17 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
-use App\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
@@ -27,7 +24,7 @@ class UserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Users';
 
-    protected static ?string $navigationGroup = 'User Management';
+    protected static ?string $navigationGroup = 'Administration';
 
     public static function form(Form $form): Form
     {
@@ -55,22 +52,16 @@ class UserResource extends Resource
                             ->minLength(8)
                             ->placeholder('Enter password'),
                         
-                        Forms\Components\Select::make('role_id')
+                        Forms\Components\Select::make('role')
                             ->label('Role')
-                            ->options(Role::all()->pluck('display_name', 'id'))
+                            ->options([
+                                UserRole::Admin->value => 'Admin',
+                                UserRole::Psychologist->value => 'Psychologist',
+                                UserRole::Patient->value => 'Patient'
+                            ])
                             ->required()
                             ->searchable()
                             ->placeholder('Select user role'),
-                        
-                        Forms\Components\DateTimePicker::make('email_verified_at')
-                            ->label('Email Verified At')
-                            ->placeholder('Select verification date'),
-                        
-                        Forms\Components\TextInput::make('avatar')
-                            ->label('Avatar URL')
-                            ->url()
-                            ->maxLength(255)
-                            ->placeholder('Enter avatar URL'),
                     ])
                     ->columns(2)
             ]);
@@ -92,13 +83,13 @@ class UserResource extends Resource
                     ->sortable()
                     ->copyable(),
                 
-                Tables\Columns\TextColumn::make('role.display_name')
+                Tables\Columns\TextColumn::make('role')
                     ->label('Role')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Admin' => 'danger',
-                        'Psychologist' => 'warning',
-                        'Patient' => 'success',
+                    ->color(fn (UserRole $state): string => match ($state) {
+                        UserRole::Admin => 'danger',
+                        UserRole::Psychologist => 'warning',
+                        UserRole::Patient => 'success',
                         default => 'gray',
                     })
                     ->sortable(),
@@ -125,7 +116,11 @@ class UserResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('role')
-                    ->relationship('role', 'display_name')
+                    ->options([
+                        UserRole::Admin->value => 'Admin',
+                        UserRole::Psychologist->value => 'Psychologist',
+                        UserRole::Patient->value => 'Patient'
+                    ])
                     ->label('Filter by Role'),
                 
                 Tables\Filters\TernaryFilter::make('email_verified_at')
@@ -163,11 +158,5 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->with('role');
     }
 }
