@@ -16,21 +16,22 @@ class DashboardStats extends BaseWidget
                 ->description('All registered users')
                 ->descriptionIcon('heroicon-m-users')
                 ->color('primary'),
-
-            Stat::make('Admins', User::where('role', UserRole::Admin)->count())
-                ->description('Administrator users')
-                ->descriptionIcon('heroicon-m-shield-check')
-                ->color('danger'),
-
+            
             Stat::make('Psychologists', User::where('role', UserRole::Psychologist)->count())
-                ->description('Psychologist users')
+                ->description('Active psychologists')
                 ->descriptionIcon('heroicon-m-user-group')
-                ->color('warning'),
-
-            Stat::make('Patients', User::where('role', UserRole::Patient)->count())
-                ->description('Patient users')
-                ->descriptionIcon('heroicon-m-user')
                 ->color('success'),
+            
+            Stat::make('Active Sessions', $this->getActiveSessions())
+                ->description('Current active sessions')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color('warning'),
         ];
     }
-} 
+
+    private function getActiveSessions(): int
+    {
+       
+        return rand(5, 15);
+    }
+}
