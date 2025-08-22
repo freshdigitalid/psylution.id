@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PsychologistController;
 use Illuminate\Support\Facades\Route;
@@ -14,9 +15,12 @@ Route::get('/cari-psikolog', [PsychologistController::class, 'index'])
 Route::get('/psikolog/{id}', [PsychologistController::class, 'show'])
     ->name('psychologist.detail');
 
-Route::get('/booking', function () {
-    return Inertia::render('psychologist/book/index');
-})->name('psychologist.book');
+Route::get('/booking/{psychologist_id}', [AppointmentController::class, 'index'])
+    ->name('psychologist.book');
+
+Route::get('/psikolog-terbaik', function () {
+    return Inertia::render('psychologist/best/index');
+})->name('psychologist.best');
 
 
 Route::middleware('auth')->group(function () {
@@ -26,10 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [Controller::class, 'profile'])
         ->name('profile');
 
-    Route::middleware('role:admin')->group(function () {
-        Route::get('/psikolog-terbaik', function () {
-            return Inertia::render('psychologist/best/index');
-        })->name('psychologist.best');
+    Route::middleware('role:patient')->group(function () {
+        Route::post('/booking', [AppointmentController::class, 'book'])
+            ->name('appointment.book');
     });
 });
 
