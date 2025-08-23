@@ -53,12 +53,12 @@ class AppointmentResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\DateTimePicker::make('start_time')
-                    ->dateTime('d M Y H:i')
+                    ->format('Y-m-d H:i:s')
                     ->timezone('Asia/Jakarta')
                     ->disabled(),
 
                 Forms\Components\DateTimePicker::make('end_time')
-                    ->dateTime('d M Y H:i')
+                    ->format('Y-m-d H:i:s')
                     ->timezone('Asia/Jakarta')
                     ->disabled(),
 
@@ -144,12 +144,13 @@ class AppointmentResource extends Resource
                             default     => (string) $value,
                         };
                     })
-                    ->colors([
-                        'warning' => AppointmentStatus::Pending->value,
-                        'success' => AppointmentStatus::Approved->value,
-                        'danger'  => AppointmentStatus::Rejected->value,
-                        'info'    => AppointmentStatus::Completed->value,
-                    ])
+                    ->color(fn (AppointmentStatus $state): string => match ($state) {
+                        AppointmentStatus::Pending => 'warning',
+                        AppointmentStatus::Approved => 'success',
+                        AppointmentStatus::Rejected => 'danger',
+                        AppointmentStatus::Completed => 'info',
+                        default => 'gray',
+                    })
                     ->sortable(),
             ])
             ->filters([
