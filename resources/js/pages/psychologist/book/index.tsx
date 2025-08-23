@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -6,26 +5,48 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import Layout from "@/layouts/layout"
 import { useForm, usePage } from "@inertiajs/react"
+import { Label } from "@/components/ui/label"
+import { startOfDay } from "date-fns"
+import { formatDate } from "@/lib/utils"
 
 export default function PsychologistBooking() {
     const { props: { psychologist_id } }: { props: { psychologist_id: string } } = usePage();
+    interface Data {
+        psychologist_id: string;
+        is_online: boolean;
+        complaints: string;
+        start_time: Date | undefined;
+        end_time: Date | undefined;
+    }
 
-    const [date, setDate] = useState<Date | undefined>(new Date())
-    const [selectedHour, setSelectedHour] = useState<string | null>(null)
-    const [consultation, setConsultation] = useState<"online" | "offline">("online")
-
-    const hours = [
-        "08:00", "09:00", "10:00", "11:00",
-        "13:00", "14:00", "15:00", "16:00"
-    ]
-
-    const { data, setData, post, errors } = useForm({
+    const { data, setData, post, errors } = useForm<Data>({
         psychologist_id: psychologist_id,
+        is_online: false,
+        complaints: '',
+        start_time: undefined,
+        end_time: undefined,
     });
+
+    //TODO fixing timepicker
+    function handleTimePicker(input_name: keyof Data, e: React.ChangeEvent<HTMLInputElement>) {
+        var dateTime = e.target.valueAsDate!;
+        const updatedDate = data[input_name] as Date;
+        updatedDate.setHours(dateTime.getHours() + dateTime.getTimezoneOffset());
+        updatedDate.setMinutes(dateTime.getMinutes());
+
+        setData(input_name, updatedDate);
+    }
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        post(route("appointment.book"));
+
+        const payload = {
+            ...data,
+            start_time: formatDate(data.start_time!),
+            end_time: formatDate(data.end_time!),
+        }
+
+        post(route("appointment.book", { data: payload }));
     }
 
     return (
@@ -61,14 +82,16 @@ export default function PsychologistBooking() {
                                 <label className="text-sm font-medium">Jenis Konsultasi</label>
                                 <div className="flex gap-2">
                                     <Button
-                                        variant={consultation === "offline" ? "default" : "outline"}
-                                        onClick={() => setConsultation("offline")}
+                                        type="button"
+                                        variant={!data.is_online ? "default" : "outline"}
+                                        onClick={(e) => setData("is_online", false)}
                                     >
                                         Offline
                                     </Button>
                                     <Button
-                                        variant={consultation === "online" ? "default" : "outline"}
-                                        onClick={() => setConsultation("online")}
+                                        type="button"
+                                        variant={data.is_online ? "default" : "outline"}
+                                        onClick={(e) => setData("is_online", true)}
                                     >
                                         Online
                                     </Button>
@@ -77,7 +100,11 @@ export default function PsychologistBooking() {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Keluhan</label>
-                                <Textarea className="h-full" placeholder="Tuliskan keluhan Anda" />
+                                <Textarea
+                                    className="h-full"
+                                    placeholder="Tuliskan keluhan Anda"
+                                    value={data.complaints}
+                                    onChange={(e) => setData("complaints", e.target.value)} />
                             </div>
                         </div>
                     </div>
@@ -88,9 +115,14 @@ export default function PsychologistBooking() {
                         <Card className="p-4">
                             <Calendar
                                 mode="single"
-                                selected={date}
-                                onSelect={setDate}
+                                selected={data.start_time ? new Date(data.start_time) : new Date()}
+                                onSelect={(e) => {
+                                    console.log(e);
+                                    setData("start_time", startOfDay(e!))
+                                    setData("end_time", startOfDay(e!))
+                                }}
                                 className="rounded-md w-full"
+                                required
                             />
                         </Card>
                     </div>
@@ -99,22 +131,43 @@ export default function PsychologistBooking() {
                     <div>
                         <h3 className="font-medium mb-2">Select Hours</h3>
                         <div className="grid grid-cols-4 gap-3">
-                            {hours.map((h) => (
-                                <Button
-                                    key={h}
-                                    variant={selectedHour === h ? "default" : "outline"}
-                                    onClick={() => setSelectedHour(h)}
-                                    className="w-full"
-                                >
-                                    {h}
-                                </Button>
-                            ))}
+
+                            <div className='flex flex-col gap-3 col-span-2'>
+                                <Label htmlFor='time-from' className='px-1'>
+                                    From
+                                </Label>
+                                <Input
+                                    className='bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none'
+                                    type='time'
+                                    id='time-from'
+                                    step='1'
+                                    defaultValue='00:00:00'
+                                    onChange={(e) => handleTimePicker("start_time", e)}
+                                    required
+                                    disabled={!data.start_time}
+                                />
+                            </div>
+                            <div className='flex flex-col gap-3 col-span-2'>
+                                <Label htmlFor='time-to' className='px-1'>
+                                    To
+                                </Label>
+                                <Input
+                                    className='bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none'
+                                    type='time'
+                                    id='time-to'
+                                    step='1'
+                                    defaultValue='00:00:00'
+                                    onChange={(e) => handleTimePicker("end_time", e)}
+                                    required
+                                    disabled={!data.end_time}
+                                />
+                            </div>
                         </div>
                     </div>
 
                     {/* Submit */}
                     <div className="flex justify-center">
-                        <Button className="px-8 py-2">Confirm Booking</Button>
+                        <Button type="submit" className="px-8 py-2">Confirm Booking</Button>
                     </div>
                 </div>
             </form>

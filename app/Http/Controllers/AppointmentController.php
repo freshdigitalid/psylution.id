@@ -24,8 +24,10 @@ class AppointmentController extends Controller
         Appointment::create([
             'psychologist_id' => $request->psychologist_id,
             'patient_id' => $patient_id,
-            'start_time' => date('Y-m-d H:i:s'),
-            'end_time' => date('Y-m-d H:i:s', strtotime('+1 hour')),
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'complaints' => $request->complaints,
+            'is_online' => $request->is_online,
             'status' => AppointmentStatus::Pending,
         ]);
     }

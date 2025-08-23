@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('end_time');
             $table->text('complaints')->nullable();
             $table->enum('status', [AppointmentStatus::Pending, AppointmentStatus::Approved, AppointmentStatus::Rejected, AppointmentStatus::Completed])->default(AppointmentStatus::Pending);
+            $table->boolean('is_online');
             $table->timestamps();
             $table->softDeletes();
 
