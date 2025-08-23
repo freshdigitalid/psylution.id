@@ -6,16 +6,37 @@ import { Calendar } from "@/components/ui/calendar"
 import Layout from "@/layouts/layout"
 import { useForm, usePage } from "@inertiajs/react"
 import { Label } from "@/components/ui/label"
-import { startOfDay } from "date-fns"
+import { format, startOfDay } from "date-fns"
 import { formatDate } from "@/lib/utils"
 import { SharedData } from "@/types"
+import { Badge } from "@/components/ui/badge"
 
 interface PsychologistBookingProps extends SharedData {
-    psychologist_id: string;
+    psychologist: PsychologistProps;
+    patient: PatientProps;
 }
 
+interface PsychologistProps {
+    id: string;
+    first_name: string;
+    last_name: string;
+    specializations: SpecializationProps[];
+}
+
+interface PatientProps {
+    id: string;
+    first_name: string;
+    last_name: string;
+    dob: string;
+}
+
+interface SpecializationProps {
+    specialization_name: string;
+}
+
+
 export default function PsychologistBooking() {
-    const { psychologist_id } = usePage<PsychologistBookingProps>().props;
+    const { psychologist, patient } = usePage<PsychologistBookingProps>().props;
 
     interface Data {
         psychologist_id: string;
@@ -26,12 +47,13 @@ export default function PsychologistBooking() {
     }
 
     const { data, setData, post, errors, transform } = useForm<Data>({
-        psychologist_id: psychologist_id,
+        psychologist_id: psychologist.id,
         is_online: false,
         complaints: '',
         start_time: undefined,
         end_time: undefined,
     });
+
 
     function handleTimePicker(input_name: keyof Data, e: React.ChangeEvent<HTMLInputElement>) {
         var time = e.target.value!;
@@ -56,6 +78,9 @@ export default function PsychologistBooking() {
         post(route("appointment.book"));
     }
 
+    const dob = new Date(patient.dob);
+    const formattedDob = format(new Date(patient.dob), 'dd-MM-yyyy');
+
     return (
         <Layout>
             <form name="createForm" onSubmit={handleSubmit}>
@@ -65,24 +90,41 @@ export default function PsychologistBooking() {
                         {/* Profile card */}
                         <Card className="flex flex-col items-center justify-center p-4">
                             <div className="w-24 h-24 rounded-full bg-blue-100" />
-                            <h2 className="mt-4 font-semibold">Lorem Ipsum</h2>
-                            <div className="flex flex-col gap-2 mt-2">
-                                <Button variant="outline" size="sm">Lorem ipsum</Button>
-                                <Button variant="outline" size="sm">Lorem ipsum</Button>
-                                <Button variant="outline" size="sm">Lorem ipsum</Button>
+                            <h1 className="text-2xl font-bold">{psychologist.first_name} {psychologist.last_name}</h1>
+
+                            <div>
+                                <p className="text-gray-600">Specialization</p>
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                    {psychologist.specializations.map((specialization, index) => (
+                                        <Badge key={index} variant="secondary">{specialization.specialization_name}</Badge>
+                                    ))}
+                                </div>
                             </div>
+                            {/* <div className="flex flex-col gap-2 mt-2"> */}
+                            {/* <Button variant="outline" size="sm">Sesi</Button> */}
+                            {/* <Button variant="outline" size="sm">Ulasan</Button> */}
+                            {/* <Button variant="outline" size="sm">Tahun?</Button> */}
+                            {/* </div> */}
                         </Card>
 
                         {/* Form fields */}
                         <div className="md:col-span-2 space-y-4 flex flex-col">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Name</label>
-                                <Input placeholder="Your name" />
+                                <Input
+                                    placeholder="Your name"
+                                    defaultValue={patient.first_name + ' ' + patient.last_name}
+                                    disabled
+                                />
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Birthday</label>
-                                <Input type="date" />
+                                <Input
+                                    type="date"
+                                    defaultValue={format(new Date(patient.dob), 'yyyy-MM-dd')}
+                                    disabled
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -108,7 +150,6 @@ export default function PsychologistBooking() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Keluhan</label>
                                 <Textarea
-                                    className="h-full"
                                     placeholder="Tuliskan keluhan Anda"
                                     value={data.complaints}
                                     onChange={(e) => setData("complaints", e.target.value)} />
