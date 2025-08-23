@@ -8,9 +8,15 @@ import { useForm, usePage } from "@inertiajs/react"
 import { Label } from "@/components/ui/label"
 import { startOfDay } from "date-fns"
 import { formatDate } from "@/lib/utils"
+import { SharedData } from "@/types"
+
+interface PsychologistBookingProps extends SharedData {
+    psychologist_id: string;
+}
 
 export default function PsychologistBooking() {
-    const { props: { psychologist_id } }: { props: { psychologist_id: string } } = usePage();
+    const { psychologist_id } = usePage<PsychologistBookingProps>().props;
+
     interface Data {
         psychologist_id: string;
         is_online: boolean;
@@ -19,7 +25,7 @@ export default function PsychologistBooking() {
         end_time: Date | undefined;
     }
 
-    const { data, setData, post, errors } = useForm<Data>({
+    const { data, setData, post, errors, transform } = useForm<Data>({
         psychologist_id: psychologist_id,
         is_online: false,
         complaints: '',
@@ -27,12 +33,13 @@ export default function PsychologistBooking() {
         end_time: undefined,
     });
 
-    //TODO fixing timepicker
     function handleTimePicker(input_name: keyof Data, e: React.ChangeEvent<HTMLInputElement>) {
-        var dateTime = e.target.valueAsDate!;
+        var time = e.target.value!;
+        const [hours, minutes] = time.split(":").map(Number);
+
         const updatedDate = data[input_name] as Date;
-        updatedDate.setHours(dateTime.getHours() + dateTime.getTimezoneOffset());
-        updatedDate.setMinutes(dateTime.getMinutes());
+        updatedDate.setHours(hours);
+        updatedDate.setMinutes(minutes);
 
         setData(input_name, updatedDate);
     }
@@ -40,13 +47,13 @@ export default function PsychologistBooking() {
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const payload = {
+        transform((data) => ({
             ...data,
             start_time: formatDate(data.start_time!),
             end_time: formatDate(data.end_time!),
-        }
+        }));
 
-        post(route("appointment.book", { data: payload }));
+        post(route("appointment.book"));
     }
 
     return (

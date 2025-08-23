@@ -53,9 +53,13 @@ class AppointmentResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\DateTimePicker::make('start_time')
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
                     ->disabled(),
 
                 Forms\Components\DateTimePicker::make('end_time')
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
                     ->disabled(),
 
                 Forms\Components\Toggle::make('is_online')
@@ -117,11 +121,13 @@ class AppointmentResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('start_time')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('end_time')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
+                    ->timezone('Asia/Jakarta')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('status')
