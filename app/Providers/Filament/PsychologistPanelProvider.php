@@ -62,6 +62,9 @@ class PsychologistPanelProvider extends PanelProvider
                     ->label('Profile')
                     ->icon('heroicon-o-user-circle')
                     ->url(fn () => Profile::getRouteName(panel: 'psychologist')),
+            ])
+            ->resources([
+                \App\Filament\Resources\AppointmentResource::class,
             ]);
     }
 }
