@@ -53,6 +53,7 @@ class Profile extends Page implements Forms\Contracts\HasForms
                 'first_name' => $user->person?->first_name,
                 'last_name'  => $user->person?->last_name,
                 'description'  => $user->person?->description,
+                'dob'  => $user->person?->dob,
             ]);
         }
 
@@ -63,6 +64,7 @@ class Profile extends Page implements Forms\Contracts\HasForms
                 'first_name' => $user->person?->first_name,
                 'last_name'  => $user->person?->last_name,
                 'description'  => $user->person?->description,
+                'dob'  => $user->person?->dob,
                 'education'  => $user->person?->education,
                 'experience'  => $user->person?->experience,
                 'locations' => $user->person?->locations->pluck('id')->toArray() ?? [],
@@ -88,10 +90,20 @@ class Profile extends Page implements Forms\Contracts\HasForms
         if (Auth::user()->role == UserRole::Psychologist) {
             $psychologistSchema = [
                 Forms\Components\TextInput::make('first_name')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->required(),
 
                 Forms\Components\TextInput::make('last_name')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->required(),
+
+                Forms\Components\DatePicker::make('dob')
+                    ->label('Birthday')
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('d M Y')
+                    ->timezone('Asia/Jakarta')
+                    ->native(false)
+                    ->required(),
 
                 Forms\Components\RichEditor::make('description')
                     ->disableToolbarButtons([
@@ -123,10 +135,20 @@ class Profile extends Page implements Forms\Contracts\HasForms
         } else if (Auth::user()->role == UserRole::Patient) {
             $patientSchema = [
                 Forms\Components\TextInput::make('first_name')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->required(),
 
                 Forms\Components\TextInput::make('last_name')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->required(),
+
+                Forms\Components\DatePicker::make('dob')
+                    ->label('Birthday')
+                    ->format('Y-m-d H:i:s')
+                    ->displayFormat('d M Y')
+                    ->timezone('Asia/Jakarta')
+                    ->native(false)
+                    ->required(),
 
                 Forms\Components\RichEditor::make('description')
                     ->disableToolbarButtons([

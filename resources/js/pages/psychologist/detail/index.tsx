@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import Layout from "@/layouts/layout";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
@@ -40,7 +40,11 @@ export default function PsychologistDetail() {
                         <ReactMarkdown rehypePlugins={[rehypeRaw]}>
                             {psychologist.description}
                         </ReactMarkdown>
-                        <Button>Booking Sesi</Button>
+                        <Button asChild>
+                            <Link href={route('psychologist.book', { id: psychologist.id })}>
+                                Booking Sesi
+                            </Link>
+                        </Button>
                     </Card>
 
                     {/* Info Section */}

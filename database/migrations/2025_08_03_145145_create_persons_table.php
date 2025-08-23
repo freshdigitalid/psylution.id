@@ -21,6 +21,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->text('experience')->nullable();
             $table->text('education')->nullable();
+            $table->dateTime('dob');
             $table->string('type');
             $table->timestamps();
             $table->softDeletes();

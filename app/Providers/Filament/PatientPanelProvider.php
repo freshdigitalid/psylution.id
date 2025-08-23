@@ -39,11 +39,6 @@ class PatientPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/PatientPanel/Pages'), for: 'App\\Filament\\PatientPanel\\Pages')
             ->pages([
                 \App\Filament\PatientPanel\Pages\Dashboard::class,
-                \App\Filament\PatientPanel\Pages\Appointments::class,
-                \App\Filament\PatientPanel\Pages\Patients::class,
-                \App\Filament\PatientPanel\Pages\Messages::class,
-                \App\Filament\PatientPanel\Pages\Reports::class,
-                \App\Filament\PatientPanel\Pages\Settings::class,
                 Profile::class,
             ])
             ->discoverWidgets(in: app_path('Filament/PatientPanel/Widgets'), for: 'App\\Filament\\PatientPanel\\Widgets')
@@ -70,7 +65,10 @@ class PatientPanelProvider extends PanelProvider
                 'profile' => MenuItem::make()
                     ->label('Profile')
                     ->icon('heroicon-o-user-circle')
-                    ->url(fn () => Profile::getRouteName(panel: 'patient')),
-            ]);;
+                    ->url(fn () => Profile::getUrl()),
+            ])
+            ->resources([
+                \App\Filament\Resources\AppointmentResource::class,
+            ]);
     }
 }

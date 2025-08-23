@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AppointmentStatus;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -14,8 +15,22 @@ class Appointment extends BaseModel implements AuditableContract
         'patient_id',
         'start_time',
         'end_time',
-        'complaints'
+        'complaints',
+        'is_online',
+        'status'
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => AppointmentStatus::class,
+        ];
+    }
 
     public function psychologist()
     {

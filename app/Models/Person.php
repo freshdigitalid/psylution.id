@@ -15,8 +15,21 @@ class Person extends BaseModel implements AuditableContract
         'first_name',
         'last_name',
         'description',
+        'dob',
         'type'
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'dob' => 'datetime',
+        ];
+    }
 
     /**
      * The attributes that should be hidden for serialization.

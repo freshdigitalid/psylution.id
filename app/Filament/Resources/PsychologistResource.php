@@ -35,6 +35,14 @@ class PsychologistResource extends Resource
                       ->placeholder('Last Name')
                       ->required(),
 
+                    Forms\Components\DatePicker::make('dob')
+                        ->label('Birthday')
+                        ->format('Y-m-d H:i:s')
+                        ->displayFormat('d M Y')
+                        ->timezone('Asia/Jakarta')
+                        ->native(false)
+                        ->required(),
+
                     Forms\Components\RichEditor::make('description')
                       ->disableToolbarButtons([
                             'attachFiles',
