@@ -36,6 +36,11 @@ class AppointmentResource extends Resource
         return Auth::user()->role == UserRole::Psychologist;
     }
 
+    public static function canView(Model $record): bool
+    {
+        return true;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -63,6 +68,7 @@ class AppointmentResource extends Resource
                     ->disabled(),
 
                 Forms\Components\Toggle::make('is_online')
+                    ->live()
                     ->label('Is Online')
                     ->disabled()
                     ->columnSpanFull(),
@@ -72,28 +78,49 @@ class AppointmentResource extends Resource
                     ->columnSpanFull(),
 
                 Forms\Components\Select::make('status')
+                    ->live()
                     ->options(function (?Appointment $record) {
-                        if (! $record) {
-                            return []; // no options when creating
-                        }
-
                         $options = [];
 
                         // pending → can go to approved / rejected
-                        if ($record->status === \App\Enums\AppointmentStatus::Pending) {
-                            $options[\App\Enums\AppointmentStatus::Approved->value] = 'Approved';
-                            $options[\App\Enums\AppointmentStatus::Rejected->value] = 'Rejected';
+                        if ($record->status === AppointmentStatus::Pending) {
+                            $options[AppointmentStatus::Approved->value] = 'Approved';
+                            $options[AppointmentStatus::Rejected->value] = 'Rejected';
                         }
 
                         // when now > end_time → can go to completed
-                        if (now()->greaterThan($record->end_time)) {
-                            $options[\App\Enums\AppointmentStatus::Completed->value] = 'Completed';
+                        if (now()->greaterThanOrEqualTo($record->end_time)) {
+                            $options[AppointmentStatus::Completed->value] = 'Completed';
+                        }
+
+                        switch ($record->status) {
+                            case AppointmentStatus::Pending:
+                                $options[AppointmentStatus::Pending->value] = 'Pending';
+                                break;
+
+                            case AppointmentStatus::Approved:
+                                $options[AppointmentStatus::Approved->value] = 'Approved';
+                                break;
+
+                            case AppointmentStatus::Rejected:
+                                $options[AppointmentStatus::Rejected->value] = 'Rejected';
+                                break;
+
+                            case AppointmentStatus::Completed:
+                                $options[AppointmentStatus::Completed->value] = 'Completed';
+                                break;
                         }
 
                         return $options;
                     })
                     ->required()
-                    ->disabled(Auth::user()->role == UserRole::Patient)
+                    ->columnSpanFull(),
+
+                Forms\Components\TextInput::make('meet_url')
+                    ->label('Meet Url')
+                    ->url()
+                    ->visible(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
+                    ->required(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
                     ->columnSpanFull(),
             ]);
     }
@@ -144,7 +171,7 @@ class AppointmentResource extends Resource
                             default     => (string) $value,
                         };
                     })
-                    ->color(fn (AppointmentStatus $state): string => match ($state) {
+                    ->color(fn(AppointmentStatus $state): string => match ($state) {
                         AppointmentStatus::Pending => 'warning',
                         AppointmentStatus::Approved => 'success',
                         AppointmentStatus::Rejected => 'danger',
@@ -157,10 +184,10 @@ class AppointmentResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
-                        \App\Enums\AppointmentStatus::Pending->value   => 'Pending',
-                        \App\Enums\AppointmentStatus::Approved->value  => 'Approved',
-                        \App\Enums\AppointmentStatus::Rejected->value  => 'Rejected',
-                        \App\Enums\AppointmentStatus::Completed->value => 'Completed',
+                        AppointmentStatus::Pending->value   => 'Pending',
+                        AppointmentStatus::Approved->value  => 'Approved',
+                        AppointmentStatus::Rejected->value  => 'Rejected',
+                        AppointmentStatus::Completed->value => 'Completed',
                     ]),
 
                 Tables\Filters\SelectFilter::make('psychologist_id')
@@ -190,6 +217,7 @@ class AppointmentResource extends Resource
         return [
             'index' => Pages\ListAppointments::route('/'),
             'edit' => Pages\EditAppointment::route('/{record}/edit'),
+            'view' => Pages\ViewAppointment::route('/{record}/view'),
         ];
     }
 }
