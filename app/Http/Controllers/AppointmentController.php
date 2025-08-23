@@ -13,7 +13,6 @@ class AppointmentController extends Controller
 {
     public function index(string $psychologist_id)
     {
-        
         $user = Auth::user()->load([
             'person' => fn ($query) => $query->select('id', 'user_id', 'first_name', 'last_name', 'dob'),
         ]);
@@ -32,6 +31,14 @@ class AppointmentController extends Controller
 
     public function book(Request $request)
     {
+        $request->validate([
+            'psychologist_id' => ['required', 'uuid', 'exists:persons,id'],
+            'is_online'       => ['required', 'boolean'],
+            'complaints'      => ['required', 'string', 'max:1000'],
+            'start_time'      => ['required', 'date', 'after_or_equal:now'],
+            'end_time'        => ['required', 'date', 'after:start_time'],
+        ]);
+
         $patient_id = Auth::user()->person->id;
 
         Appointment::create([
