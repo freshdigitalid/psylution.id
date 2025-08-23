@@ -45,7 +45,7 @@ const Navbar = () => {
                     {user ? (
                         <div className="flex items-center gap-3">
                             {/* Show Dashboard button only for admin and psychologist */}
-                            {(user.role?.name === 'admin' || user.role?.name === 'psychologist') && (
+                            {(user.role === 'admin' || user.role === 'psychologist') && (
                                 <Button
                                     onClick={() => openRoute('dashboard')}
                                     variant={'outline'}
@@ -70,7 +70,7 @@ const Navbar = () => {
                                             <p className="text-sm leading-none font-medium">{user.name}</p>
                                             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                                             <Badge variant="secondary" className="w-fit capitalize">
-                                                {user.role?.name || 'Patient'}
+                                                {user.role || 'Patient'}
                                             </Badge>
                                         </div>
                                     </DropdownMenuLabel>
