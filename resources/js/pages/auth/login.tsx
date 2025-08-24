@@ -1,42 +1,26 @@
-import { Link, useForm} from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from "@/components/ui/separator";
-import { Checkbox } from '@/components/ui/checkbox';
-import axios from 'axios';
+import AppLogoIcon from '@/components/app-logo-icon';
 
 type LoginForm = {
     email: string;
     password: string;
-    remember: boolean;
 };
 
-// Logo component untuk Psylution
-const AppLogoIcon = ({ className }: { className?: string }) => (
-    <img
-        src="/logo/logo.png"
-        alt="Psylution Logo"
-        className={className}
-    />
-);
-
 export default function Login() {
-    const { data, setData, processing, errors } = useForm<Required<LoginForm>>({
+    const { data, setData, processing, errors, post } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
-        remember: false,
     });
 
     const submit: FormEventHandler = async (e) => {
         e.preventDefault();
-        const response = await axios.post('/login', data);
-        if (response.data.redirect) {
-            window.location.href = response.data.redirect;
-        }
+        post('login');
     };
 
     return (
@@ -94,8 +78,8 @@ export default function Login() {
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 placeholder="email@example.com"
+                                error={errors.email}
                             />
-                            <InputError message={errors.email} />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="password">Password</Label>
@@ -108,19 +92,11 @@ export default function Login() {
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 placeholder="Password"
+                                error={errors.password}
                             />
-                            <InputError message={errors.password} />
                         </div>
 
                         <div className="mt-2 flex items-center justify-between">
-                            <label className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Checkbox
-                                    checked={data.remember}
-                                    onCheckedChange={(checked) => setData('remember', Boolean(checked))}
-                                    aria-label="Keep me logged in"
-                                />
-                                <span>Keep me logged in</span>
-                            </label>
                             <Link href="/forgot-password" className="text-sm text-[#5274FF] hover:underline">
                                 Forgot password?
                             </Link>
