@@ -11,10 +11,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SharedData, User } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Logo } from './logo';
 import { NavMenu } from './nav-menu';
 import { NavigationSheet } from './navigation-sheet';
 import ThemeToggle from './theme-toggle';
+import { useInitials } from '@/hooks/use-initials';
+import AppLogoIcon from '../app-logo-icon';
 
 const Navbar = () => {
     const { auth } = usePage<SharedData>().props;
@@ -24,19 +25,12 @@ const Navbar = () => {
         window.location.href = route(routeName);
     }
 
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map((word) => word.charAt(0))
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    };
+    const getInitials = useInitials();
 
     return (
         <nav className="fixed inset-x-4 top-6 z-10 mx-auto h-14 max-w-screen-xl rounded-full border bg-background/50 backdrop-blur-sm xs:h-16 dark:border-slate-700/70">
             <div className="mx-auto flex h-full items-center justify-between px-4">
-                <Logo />
+                <AppLogoIcon width={124} height={32} className="h-full w-auto" />
 
                 {/* Desktop Menu */}
                 <NavMenu className="hidden md:block" />

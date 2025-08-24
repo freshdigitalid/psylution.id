@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Filament\Pages\Dashboard;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,30 +29,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): JsonResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
 
         $request->session()->regenerate();
 
-        switch (Auth::user()->role) {
-            case UserRole::Admin:
-                return response()->json([
-                    'redirect' => Dashboard::getUrl(panel: 'admin'),
-                ]);
-            case UserRole::Psychologist:
-                return response()->json([
-                    'redirect' => Dashboard::getUrl(panel: 'psychologist'),
-                ]);
-            case UserRole::Patient:
-                return response()->json([
-                    'redirect' => route('home'),
-                ]);
-            default:
-                return response()->json([
-                    'redirect' => route('home'),
-                ]);
-        }
+        return Inertia::location(route('dashboard'));
     }
 
     /**
