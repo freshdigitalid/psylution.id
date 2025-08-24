@@ -42,4 +42,9 @@ class Appointment extends BaseModel implements AuditableContract
     {
         return $this->belongsTo(Patient::class);
     }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
 }
