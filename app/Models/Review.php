@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-
 class Review extends BaseModel
-{
-    use HasUuids;
-    
+{ 
+    // disable soft delete
+    public static function bootSoftDeletes() {}
+    public function runSoftDelete() {}
+
     protected $fillable = [
         'appointment_id',
         'reviewer_id',

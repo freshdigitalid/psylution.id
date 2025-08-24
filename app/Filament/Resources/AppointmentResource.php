@@ -14,6 +14,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Mokhosh\FilamentRating\Columns\RatingColumn;
+use Mokhosh\FilamentRating\Components\Rating;
 
 class AppointmentResource extends Resource
 {
@@ -33,6 +35,10 @@ class AppointmentResource extends Resource
 
     public static function canEdit(Model $record): bool
     {
+        if (Auth::user()->role === UserRole::Patient && $record->status == AppointmentStatus::Completed) {
+            return true;
+        }
+
         return Auth::user()->role == UserRole::Psychologist;
     }
 
@@ -45,83 +51,102 @@ class AppointmentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('patient_full_name')
-                    ->label('Patient')
-                    ->disabled()
-                    ->formatStateUsing(fn($record) => $record?->patient->first_name . ' ' . $record?->patient->last_name)
-                    ->columnSpanFull(),
 
-                Forms\Components\TextInput::make('psychologist_full_name')
-                    ->label('Psychologist')
-                    ->disabled()
-                    ->formatStateUsing(fn($record) => $record?->psychologist->first_name . ' ' . $record?->psychologist->last_name)
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Appointment Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('patient_full_name')
+                            ->label('Patient')
+                            ->disabled()
+                            ->formatStateUsing(fn($record) => $record?->patient->first_name . ' ' . $record?->patient->last_name)
+                            ->columnSpanFull(),
 
-                Forms\Components\DateTimePicker::make('start_time')
-                    ->format('Y-m-d H:i:s')
-                    ->timezone('Asia/Jakarta')
-                    ->disabled(),
+                        Forms\Components\TextInput::make('psychologist_full_name')
+                            ->label('Psychologist')
+                            ->disabled()
+                            ->formatStateUsing(fn($record) => $record?->psychologist->first_name . ' ' . $record?->psychologist->last_name)
+                            ->columnSpanFull(),
 
-                Forms\Components\DateTimePicker::make('end_time')
-                    ->format('Y-m-d H:i:s')
-                    ->timezone('Asia/Jakarta')
-                    ->disabled(),
+                        Forms\Components\DateTimePicker::make('start_time')
+                            ->format('Y-m-d H:i:s')
+                            ->timezone('Asia/Jakarta')
+                            ->disabled(),
 
-                Forms\Components\Toggle::make('is_online')
-                    ->live()
-                    ->label('Is Online')
-                    ->disabled()
-                    ->columnSpanFull(),
+                        Forms\Components\DateTimePicker::make('end_time')
+                            ->format('Y-m-d H:i:s')
+                            ->timezone('Asia/Jakarta')
+                            ->disabled(),
 
-                Forms\Components\Textarea::make('complaints')
-                    ->disabled()
-                    ->columnSpanFull(),
+                        Forms\Components\Toggle::make('is_online')
+                            ->live()
+                            ->label('Is Online')
+                            ->disabled()
+                            ->columnSpanFull(),
 
-                Forms\Components\Select::make('status')
-                    ->live()
-                    ->options(function (?Appointment $record) {
-                        $options = [];
+                        Forms\Components\Textarea::make('complaints')
+                            ->disabled()
+                            ->columnSpanFull(),
 
-                        // pending → can go to approved / rejected
-                        if ($record->status === AppointmentStatus::Pending) {
-                            $options[AppointmentStatus::Approved->value] = 'Approved';
-                            $options[AppointmentStatus::Rejected->value] = 'Rejected';
-                        }
+                        Forms\Components\Select::make('status')
+                            ->live()
+                            ->options(function (?Appointment $record) {
+                                $options = [];
 
-                        // when now > end_time → can go to completed
-                        if (now()->greaterThanOrEqualTo($record->end_time)) {
-                            $options[AppointmentStatus::Completed->value] = 'Completed';
-                        }
+                                // pending → can go to approved / rejected
+                                if ($record->status === AppointmentStatus::Pending) {
+                                    $options[AppointmentStatus::Approved->value] = 'Approved';
+                                    $options[AppointmentStatus::Rejected->value] = 'Rejected';
+                                }
 
-                        switch ($record->status) {
-                            case AppointmentStatus::Pending:
-                                $options[AppointmentStatus::Pending->value] = 'Pending';
-                                break;
+                                // when now > end_time → can go to completed
+                                if (now()->greaterThanOrEqualTo($record->end_time)) {
+                                    $options[AppointmentStatus::Completed->value] = 'Completed';
+                                }
 
-                            case AppointmentStatus::Approved:
-                                $options[AppointmentStatus::Approved->value] = 'Approved';
-                                break;
+                                switch ($record->status) {
+                                    case AppointmentStatus::Pending:
+                                        $options[AppointmentStatus::Pending->value] = 'Pending';
+                                        break;
 
-                            case AppointmentStatus::Rejected:
-                                $options[AppointmentStatus::Rejected->value] = 'Rejected';
-                                break;
+                                    case AppointmentStatus::Approved:
+                                        $options[AppointmentStatus::Approved->value] = 'Approved';
+                                        break;
 
-                            case AppointmentStatus::Completed:
-                                $options[AppointmentStatus::Completed->value] = 'Completed';
-                                break;
-                        }
+                                    case AppointmentStatus::Rejected:
+                                        $options[AppointmentStatus::Rejected->value] = 'Rejected';
+                                        break;
 
-                        return $options;
-                    })
-                    ->required()
-                    ->columnSpanFull(),
+                                    case AppointmentStatus::Completed:
+                                        $options[AppointmentStatus::Completed->value] = 'Completed';
+                                        break;
+                                }
 
-                Forms\Components\TextInput::make('meet_url')
-                    ->label('Meet Url')
-                    ->url()
-                    ->visible(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
-                    ->required(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
-                    ->columnSpanFull(),
+                                return $options;
+                            })
+                            ->required()
+                            ->columnSpanFull(),
+
+                        Forms\Components\TextInput::make('meet_url')
+                            ->label('Meet Url')
+                            ->url()
+                            ->visible(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
+                            ->required(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
+                            ->columnSpanFull(),
+                    ])
+                    ->disabled(Auth::user()->role !== UserRole::Psychologist),
+
+                // Person Info Section (conditionally visible)
+                Forms\Components\Section::make('Appointment Review')
+                    ->schema([
+                        Rating::make('score')
+                            ->label('Score')
+                            ->required(Auth::user()->role == UserRole::Patient),
+
+                        Forms\Components\Textarea::make('notes')
+                            ->label('Notes'),
+                    ])
+                    ->columns(1)
+                    ->disabled(Auth::user()->role !== UserRole::Patient)
+                    ->visible(fn($get) => $get('status') == AppointmentStatus::Completed->value),
             ]);
     }
 
@@ -132,11 +157,11 @@ class AppointmentResource extends Resource
                 $user = Auth::user();
 
                 if ($user->role == UserRole::Admin) {
-                    return $query;
+                    return $query->with('review');
                 }
 
                 $col_to_filter = $user->role == UserRole::Psychologist ? 'psychologist_id' : 'patient_id';
-                return $query->where($col_to_filter, $user->person->id);
+                return $query->with('review')->where($col_to_filter, $user->person->id);
             })
             ->columns([
                 Tables\Columns\TextColumn::make('psychologist.full_name')
@@ -179,6 +204,8 @@ class AppointmentResource extends Resource
                         default => 'gray',
                     })
                     ->sortable(),
+
+                RatingColumn::make('review.score'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
