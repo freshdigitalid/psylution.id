@@ -19,7 +19,7 @@ class CreateUser extends CreateRecord
             $data['name'] = trim($data['person_first_name'] . ' ' . $data['person_last_name']);
         }
 
-        if (!$data['is_new_person']) {
+        if ($data['role'] != UserRole::Admin->value && !$data['is_new_person']) {
             $person = Person::find($data['person']);
             $data['name'] = trim($person->first_name . ' ' . $person->last_name);
         }
