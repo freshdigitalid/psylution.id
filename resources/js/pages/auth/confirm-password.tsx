@@ -3,7 +3,6 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,9 +41,8 @@ export default function ConfirmPassword() {
                             value={data.password}
                             autoFocus
                             onChange={(e) => setData('password', e.target.value)}
+                            error={errors.password}
                         />
-
-                        <InputError message={errors.password} />
                     </div>
 
                     <div className="flex items-center">

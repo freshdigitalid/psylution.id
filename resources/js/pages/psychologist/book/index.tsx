@@ -46,7 +46,7 @@ export default function PsychologistBooking() {
         end_time: Date | undefined;
     }
 
-    const { data, setData, post, errors, transform } = useForm<Data>({
+    const { data, setData, post, errors, transform, processing } = useForm<Data>({
         psychologist_id: psychologist.id,
         is_online: false,
         complaints: '',
@@ -165,13 +165,15 @@ export default function PsychologistBooking() {
                                 mode="single"
                                 selected={data.start_time ? new Date(data.start_time) : new Date()}
                                 onSelect={(e) => {
-                                    console.log(e);
                                     setData("start_time", startOfDay(e!))
                                     setData("end_time", startOfDay(e!))
                                 }}
                                 className="rounded-md w-full"
                                 required
                             />
+                            {errors.start_time && (
+                                <div className="text-red-600 text-sm">{errors.start_time}</div>
+                            )}
                         </Card>
                     </div>
 
@@ -193,6 +195,7 @@ export default function PsychologistBooking() {
                                     onChange={(e) => handleTimePicker("start_time", e)}
                                     required
                                     disabled={!data.start_time}
+                                    error={errors.start_time}
                                 />
                             </div>
                             <div className='flex flex-col gap-3 col-span-2'>
@@ -208,6 +211,7 @@ export default function PsychologistBooking() {
                                     onChange={(e) => handleTimePicker("end_time", e)}
                                     required
                                     disabled={!data.end_time}
+                                    error={errors.end_time}
                                 />
                             </div>
                         </div>
@@ -215,7 +219,7 @@ export default function PsychologistBooking() {
 
                     {/* Submit */}
                     <div className="flex justify-center">
-                        <Button type="submit" className="px-8 py-2">Confirm Booking</Button>
+                        <Button type="submit" className="px-8 py-2" disabled={processing}>Confirm Booking</Button>
                     </div>
                 </div>
             </form>

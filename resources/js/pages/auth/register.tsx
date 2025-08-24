@@ -2,7 +2,6 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,8 +48,8 @@ export default function Register() {
                             onChange={(e) => setData('name', e.target.value)}
                             disabled={processing}
                             placeholder="Full name"
+                            error={errors.name}
                         />
-                        <InputError message={errors.name} className="mt-2" />
                     </div>
 
                     <div className="grid gap-2">
@@ -65,8 +64,8 @@ export default function Register() {
                             onChange={(e) => setData('email', e.target.value)}
                             disabled={processing}
                             placeholder="email@example.com"
+                            error={errors.email}
                         />
-                        <InputError message={errors.email} />
                     </div>
 
                     <div className="grid gap-2">
@@ -81,8 +80,8 @@ export default function Register() {
                             onChange={(e) => setData('password', e.target.value)}
                             disabled={processing}
                             placeholder="Password"
+                            error={errors.password}
                         />
-                        <InputError message={errors.password} />
                     </div>
 
                     <div className="grid gap-2">
@@ -97,8 +96,8 @@ export default function Register() {
                             onChange={(e) => setData('password_confirmation', e.target.value)}
                             disabled={processing}
                             placeholder="Confirm password"
+                            error={errors.password_confirmation}
                         />
-                        <InputError message={errors.password_confirmation} />
                     </div>
 
                     <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>

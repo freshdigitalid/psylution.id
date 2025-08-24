@@ -2,7 +2,6 @@ import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,8 +51,8 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                             className="mt-1 block w-full"
                             readOnly
                             onChange={(e) => setData('email', e.target.value)}
+                            error={errors.email}
                         />
-                        <InputError message={errors.email} className="mt-2" />
                     </div>
 
                     <div className="grid gap-2">
@@ -68,8 +67,8 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                             autoFocus
                             onChange={(e) => setData('password', e.target.value)}
                             placeholder="Password"
+                            error={errors.password}
                         />
-                        <InputError message={errors.password} />
                     </div>
 
                     <div className="grid gap-2">
@@ -83,8 +82,8 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                             className="mt-1 block w-full"
                             onChange={(e) => setData('password_confirmation', e.target.value)}
                             placeholder="Confirm password"
+                            error={errors.password_confirmation}
                         />
-                        <InputError message={errors.password_confirmation} className="mt-2" />
                     </div>
 
                     <Button type="submit" className="mt-4 w-full" disabled={processing}>
