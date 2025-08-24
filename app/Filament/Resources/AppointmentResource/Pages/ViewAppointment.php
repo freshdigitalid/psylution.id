@@ -10,10 +10,12 @@ class ViewAppointment extends ViewRecord
 {
     protected static string $resource = AppointmentResource::class;
 
-    protected function getHeaderActions(): array
+    protected function mutateFormDataBeforeFill(array $data): array
     {
-        return [
-            //
-        ];
+        $record = $this->record->load('review');
+        $data['score'] = $record->review?->score;
+        $data['notes'] = $record->review?->notes;
+
+        return $data;
     }
 }
