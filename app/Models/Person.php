@@ -58,6 +58,6 @@ class Person extends BaseModel implements AuditableContract
 
     public function locations()
     {
-        return $this->belongsToMany(Location::class, 'locations_persons', 'person_id', 'location_id');
+        return $this->belongsToMany(Location::class, 'persons_locations', 'person_id', 'location_id');
     }
 }

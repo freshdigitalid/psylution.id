@@ -12,6 +12,6 @@ class Location extends BaseModel
 
     public function persons()
     {
-        return $this->belongsToMany(Person::class, 'locations_persons', 'location_id', 'person_id');
+        return $this->belongsToMany(Person::class, 'persons_locations', 'location_id', 'person_id');
     }
 }

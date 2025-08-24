@@ -1,9 +1,8 @@
 // Components
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -53,9 +52,13 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
                 <div className="space-x-1 text-center text-sm text-muted-foreground">
                     <span>Or, return to</span>
-                    <TextLink href={route('login')}>log in</TextLink>
+                    <Button variant={'link'} asChild className="px-0">
+                        <Link href={route('login')}>
+                            Log in
+                        </Link>
+                    </Button>
                 </div>
-            </div>
-        </AuthLayout>
+            </div >
+        </AuthLayout >
     );
 }
