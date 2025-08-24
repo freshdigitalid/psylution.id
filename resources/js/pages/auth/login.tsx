@@ -107,8 +107,6 @@ export default function Login() {
                             Log In
                         </Button>
                     </form>
-
-                    <p className="mt-8 text-center text-sm text-muted-foreground">Or, use social media to sign in</p>
                 </div>
             </div>
         </div>
