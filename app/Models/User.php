@@ -21,8 +21,10 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        'phone_number',
         'password',
-        'role_id'
+        'role_id',
+        'is_verified'
     ];
 
     /**
@@ -45,6 +47,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_verified' => 'boolean'
         ];
     }
 
@@ -74,6 +77,14 @@ class User extends Authenticatable implements FilamentUser
     public function providers()
     {
         return $this->hasMany(Provider::class);
+    }
+
+    /**
+     * Get the user's OTP codes.
+     */
+    public function otps()
+    {
+        return $this->hasMany(UserOtp::class);
     }
 
     public function isAuthenticated(): bool
