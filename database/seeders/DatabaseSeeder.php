@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             PatientUserSeeder::class,
             PsychologistUserSeeder::class,
+            ServiceSeeder::class, // Add services data
+            AboutUsSeeder::class, // Add about us data
         ]);
 
         // You can also use factories for additional users

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\AppointmentStatus;
 use OwenIt\Auditing\Auditable;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
@@ -11,27 +10,24 @@ class Appointment extends BaseModel implements AuditableContract
     use Auditable;
 
     protected $fillable = [
+        'user_id',
         'psychologist_id',
-        'patient_id',
-        'start_time',
-        'end_time',
-        'complaints',
-        'is_online',
-        'status',
-        'meet_url',
-        'diagnosis',
+        'appointment_date',
+        'appointment_time',
+        'consultation_type',
+        'complaint',
+        'notes',
+        'status'
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'appointment_date' => 'date',
+        'appointment_time' => 'string',
+    ];
+
+    public function user()
     {
-        return [
-            'status' => AppointmentStatus::class,
-        ];
+        return $this->belongsTo(User::class);
     }
 
     public function psychologist()
@@ -42,10 +38,5 @@ class Appointment extends BaseModel implements AuditableContract
     public function patient()
     {
         return $this->belongsTo(Patient::class);
-    }
-
-    public function review()
-    {
-        return $this->hasOne(Review::class);
     }
 }
