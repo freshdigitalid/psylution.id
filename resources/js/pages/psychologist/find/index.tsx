@@ -19,9 +19,13 @@ interface Psychologist {
     updated_at: string;
 }
 
+interface ListOfPsychologist extends Omit<PaginationDto, "data"> {
+    data: Psychologist[];
+}
+
 export default function PsychologistSchedule() {
     const [sort, setSort] = useState("default");
-    const { props: { psychologists } }: { props: { psychologists: Psychologist[] } } = usePage();
+    const { props: { psychologists } }: { props: { psychologists: ListOfPsychologist } } = usePage();
 
     return (
         <Layout>
@@ -73,7 +77,7 @@ export default function PsychologistSchedule() {
 
                     {/* Cards */}
                     <div className="space-y-4">
-                        {psychologists.map((x, i) => (
+                        {psychologists.data.map((x, i) => (
                             <Card key={i} className="p-4 flex justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className="w-16 h-16 rounded-full bg-blue-200" />
@@ -86,7 +90,7 @@ export default function PsychologistSchedule() {
                                 </div>
                                 <Button asChild>
                                     <Link href={route('psychologist.detail', { id: x.id })}>
-                                        <a className="text-sm">Booking Sesi</a>
+                                        Booking Sesi
                                     </Link>
                                 </Button>
                             </Card>
@@ -95,11 +99,57 @@ export default function PsychologistSchedule() {
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 mt-4">
-                        <Button variant="outline" size="icon"><ChevronLeft /></Button>
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <Button key={i} variant={i === 1 ? "default" : "outline"}>{i + 1}</Button>
-                        ))}
-                        <Button variant="outline" size="icon"><ChevronRight /></Button>
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            disabled={psychologists.current_page === 1}>
+                            <Link href={route("psychologist.find", { page: psychologists.current_page - 1 })}>
+                                <ChevronLeft />
+                            </Link>
+                        </Button>
+                        {Array.from({ length: psychologists.last_page }).map((_, i) => {
+                            const page = i + 1;
+                            const current = psychologists.current_page;
+
+                            // Always show:
+                            // - first page
+                            // - last page
+                            // - current page
+                            // - 2 pages before/after current
+                            // Hide others, but insert ellipsis where needed
+                            if (
+                                page === 1 ||
+                                page === psychologists.last_page ||
+                                (page >= current - 2 && page <= current + 2)
+                            ) {
+                                return (
+                                    <Button
+                                        key={page}
+                                        variant={page === current ? "default" : "outline"}
+                                        asChild
+                                    >
+                                        <Link href={route("psychologist.find", { page })}>{page}</Link>
+                                    </Button>
+                                );
+                            }
+
+                            if (
+                                (page === psychologists.last_page - 1 && current < psychologists.last_page - 3) ||
+                                (page === 2 && current > 4)
+                            ) {
+                                return <Button key="ellipsis" variant={"outline"} disabled>...</Button>
+                            }
+
+                            return null;
+                        })}
+                        <Button
+                            variant="outline"
+                            size="icon"
+                            disabled={psychologists.current_page === psychologists.last_page}>
+                            <Link href={route("psychologist.find", { page: psychologists.current_page + 1 })}>
+                                <ChevronRight />
+                            </Link>
+                        </Button>
                     </div>
                 </main>
             </div>
