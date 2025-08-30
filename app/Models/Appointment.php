@@ -18,7 +18,8 @@ class Appointment extends BaseModel implements AuditableContract
         'complaints',
         'is_online',
         'status',
-        'meet_url'
+        'meet_url',
+        'diagnosis',
     ];
 
     /**

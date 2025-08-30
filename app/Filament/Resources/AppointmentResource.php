@@ -131,6 +131,12 @@ class AppointmentResource extends Resource
                             ->visible(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
                             ->required(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
                             ->columnSpanFull(),
+
+                        Forms\Components\Textarea::make('diagnosis')
+                            ->disabled(Auth::user()->role !== UserRole::Psychologist)
+                            ->required(fn($get) => $get('status') == AppointmentStatus::Completed->value && Auth::user()->role == UserRole::Psychologist)
+                            ->visible(fn($get) => $get('status') == AppointmentStatus::Completed->value)
+                            ->label('Diagnosis'),
                     ])
                     ->disabled(Auth::user()->role !== UserRole::Psychologist),
 
