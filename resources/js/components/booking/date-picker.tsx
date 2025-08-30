@@ -10,7 +10,7 @@ interface DatePickerProps {
 }
 
 const DatePicker = ({ selectedDate, onDateSelect, className }: DatePickerProps) => {
-    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [currentMonth, setCurrentMonth] = useState(new Date()); // date
 
     const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
 
