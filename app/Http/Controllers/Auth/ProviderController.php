@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Provider;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +69,9 @@ class ProviderController extends Controller
                 $user = User::where('email', $providerUser->getEmail())->first();
 
                 if (!$user) {
+                    // Get patient role
+                    $patientRole = Role::where('name', 'patient')->first();
+
                     // Create new user
                     $user = User::create([
                         'name' => $providerUser->getName(),
@@ -76,7 +79,7 @@ class ProviderController extends Controller
                         'password' => Hash::make(Str::random(24)),
                         'email_verified_at' => now(),
                         'avatar' => $providerUser->getAvatar(),
-                        'role' => UserRole::Patient
+                        'role_id' => $patientRole->id
                     ]);
 
                     $nameArr = explode(" ", $providerUser->getName());
@@ -100,24 +103,18 @@ class ProviderController extends Controller
                     'avatar' => $providerUser->getAvatar(),
                     'name' => $providerUser->getName(),
                     'nickname' => $providerUser->getNickname(),
+                    'token' => $providerUser->token,
                 ]);
-
-                // if user avatar is not set, update it
-                if (!$user->avatar) {
-                    $user->update(['avatar' => $providerUser->getAvatar()]);
-                }
-                
             }
 
             DB::commit();
 
-            // Log the user in
             Auth::login($user);
 
-            return redirect($previousUrl)->with('success', 'Logged in successfully.');
+            return redirect($previousUrl);
 
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::rollback();
             return redirect()->route('welcome')->with('error', 'Authentication failed. Please try again.');
         }
     }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,8 +21,10 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name',
         'email',
+        'phone_number',
         'password',
-        'role'
+        'role_id',
+        'is_verified'
     ];
 
     /**
@@ -46,7 +47,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class,
+            'is_verified' => 'boolean'
         ];
     }
 
@@ -56,10 +57,18 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return (
-            ($this->role === UserRole::Admin && $panel->getId() === 'admin') ||
-            ($this->role === UserRole::Patient && $panel->getId() === 'patient') ||
-            ($this->role === UserRole::Psychologist && $panel->getId() === 'psychologist')
+            ($this->role->name === 'admin' && $panel->getId() === 'admin') ||
+            ($this->role->name === 'patient' && $panel->getId() === 'patient') ||
+            ($this->role->name === 'psychologist' && $panel->getId() === 'psychologist')
         );
+    }
+
+    /**
+     * Get the user's role.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 
     /**
@@ -68,6 +77,14 @@ class User extends Authenticatable implements FilamentUser
     public function providers()
     {
         return $this->hasMany(Provider::class);
+    }
+
+    /**
+     * Get the user's OTP codes.
+     */
+    public function otps()
+    {
+        return $this->hasMany(UserOtp::class);
     }
 
     public function isAuthenticated(): bool

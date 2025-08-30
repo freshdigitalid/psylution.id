@@ -10,12 +10,25 @@ class Appointment extends BaseModel implements AuditableContract
     use Auditable;
 
     protected $fillable = [
+        'user_id',
         'psychologist_id',
-        'patient_id',
-        'start_time',
-        'end_time',
-        'complaints'
+        'appointment_date',
+        'appointment_time',
+        'consultation_type',
+        'complaint',
+        'notes',
+        'status'
     ];
+
+    protected $casts = [
+        'appointment_date' => 'date',
+        'appointment_time' => 'string',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function psychologist()
     {
