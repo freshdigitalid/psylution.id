@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\AppointmentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +21,10 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->text('complaints')->nullable();
+            $table->text('diagnosis')->nullable();
+            $table->enum('status', [AppointmentStatus::Pending, AppointmentStatus::Approved, AppointmentStatus::Rejected, AppointmentStatus::Completed])->default(AppointmentStatus::Pending);
+            $table->boolean('is_online');
+            $table->string('meet_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

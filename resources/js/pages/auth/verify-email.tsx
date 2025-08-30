@@ -1,9 +1,8 @@
 // Components
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import AuthLayout from '@/layouts/auth-layout';
 
@@ -32,9 +31,11 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     Resend verification email
                 </Button>
 
-                <TextLink href={route('logout')} method="post" className="mx-auto block text-sm">
-                    Log out
-                </TextLink>
+                <Button variant={'link'} className="mx-auto block text-sm" asChild>
+                    <Link href={route('logout')} method="post" >
+                        Log out
+                    </Link>
+                </Button>
             </form>
         </AuthLayout>
     );

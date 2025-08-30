@@ -34,6 +34,39 @@ class PsychologistResource extends Resource
                       ->label('Last Name')
                       ->placeholder('Last Name')
                       ->required(),
+
+                    Forms\Components\DatePicker::make('dob')
+                        ->label('Birthday')
+                        ->format('Y-m-d H:i:s')
+                        ->displayFormat('d M Y')
+                        ->timezone('Asia/Jakarta')
+                        ->native(false)
+                        ->required(),
+
+                    Forms\Components\RichEditor::make('description')
+                      ->disableToolbarButtons([
+                            'attachFiles',
+                      ]),
+                      
+                    Forms\Components\Select::make('locations')
+                        ->multiple()
+                        ->relationship('locations', 'location_name')
+                        ->preload(),
+                      
+                    Forms\Components\Select::make('specializations')
+                        ->multiple()
+                        ->relationship('specializations', 'specialization_name')
+                        ->preload(),
+                    
+                    Forms\Components\RichEditor::make('education')
+                        ->toolbarButtons([
+                            'bulletList'
+                        ]),
+
+                    Forms\Components\RichEditor::make('experience')
+                        ->toolbarButtons([
+                            'bulletList'
+                        ]),
                 ])
         ]);
     }

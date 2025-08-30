@@ -13,6 +13,7 @@
         "laravel/framework": "^12.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.9",
+        "mokhosh/filament-rating": "^1.4",
         "owen-it/laravel-auditing": "^14.0",
         "tightenco/parental": "^1.4",
         "tightenco/ziggy": "^2.4"

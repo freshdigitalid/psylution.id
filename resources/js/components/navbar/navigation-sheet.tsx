@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
-import { Logo } from "./logo";
 import { NavMenu } from "./nav-menu";
+import AppLogoIcon from "../app-logo-icon";
 
 export const NavigationSheet = () => {
     return (
@@ -12,9 +12,9 @@ export const NavigationSheet = () => {
                     <Menu />
                 </Button>
             </SheetTrigger>
-            <SheetContent>
-                <Logo />
-                <NavMenu orientation="vertical" className="mt-12" />
+            <SheetContent className="p-4 gap-0 overflow-y-auto max-h-screen">
+                <AppLogoIcon width={124} height={32} className="h-full w-auto object-contain" />
+                <NavMenu orientation="vertical" />
 
                 <div className="mt-8 space-y-4">
                     <Button variant="outline" className="w-full sm:hidden">

@@ -18,6 +18,10 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); 
             $table->string('first_name');
             $table->string('last_name')->nullable();
+            $table->text('description')->nullable();
+            $table->text('experience')->nullable();
+            $table->text('education')->nullable();
+            $table->dateTime('dob');
             $table->string('type');
             $table->timestamps();
             $table->softDeletes();

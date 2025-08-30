@@ -1,7 +1,7 @@
+import AppLogoIcon from "@/components/app-logo-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, CirclePlay } from "lucide-react";
-import LogoCloud from "./logo-cloud";
 
 const Hero = () => {
     return (
@@ -36,7 +36,7 @@ const Hero = () => {
                     </div>
                 </div>
             </div>
-            <LogoCloud className="mt-24 max-w-3xl mx-auto" />
+            <AppLogoIcon className="mt-24 max-w-3xl mx-auto" />
         </div>
     );
 };

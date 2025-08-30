@@ -9,9 +9,9 @@ interface AppLayoutProps {
 export default ({ children, ...props }: AppLayoutProps) => (
     <>
         <Navbar />
-        <main className="pt-16 xs:pt-20 sm:pt-24">
+        <main className="pt-16 xs:pt-20 sm:pt-24 py-20">
             {children}
-            <Footer />
         </main>
+        <Footer />
     </>
 );

@@ -11,43 +11,26 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SharedData, User } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Logo } from './logo';
 import { NavMenu } from './nav-menu';
 import { NavigationSheet } from './navigation-sheet';
 import ThemeToggle from './theme-toggle';
+import { useInitials } from '@/hooks/use-initials';
+import AppLogoIcon from '../app-logo-icon';
 
 const Navbar = () => {
     const { auth } = usePage<SharedData>().props;
     const user = auth.user as User | null;
 
-    function openDashboard(role: string) {
-        // Redirect to the appropriate dashboard based on user role
-        switch (role) {
-            case 'admin':
-                window.location.href = route('filament.admin.pages.dashboard');
-                break;
-            case 'psychologist':
-                window.location.href = route('filament.psychologist.pages.dashboard');
-                break;
-            default:
-                window.location.href = route('filament.patient.pages.dashboard');
-                break;
-        }
+    function openRoute(routeName: string) {
+        window.location.href = route(routeName);
     }
 
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map((word) => word.charAt(0))
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    };
+    const getInitials = useInitials();
 
     return (
         <nav className="fixed inset-x-4 top-6 z-10 mx-auto h-14 max-w-screen-xl rounded-full border bg-background/50 backdrop-blur-sm xs:h-16 dark:border-slate-700/70">
             <div className="mx-auto flex h-full items-center justify-between px-4">
-                <Logo />
+                <AppLogoIcon width={124} height={32} className="h-full w-auto" />
 
                 {/* Desktop Menu */}
                 <NavMenu className="hidden md:block" />
@@ -56,9 +39,9 @@ const Navbar = () => {
                     {user ? (
                         <div className="flex items-center gap-3">
                             {/* Show Dashboard button only for admin and psychologist */}
-                            {(user.role?.name === 'admin' || user.role?.name === 'psychologist') && (
+                            {(user.role === 'admin' || user.role === 'psychologist') && (
                                 <Button
-                                    onClick={() => openDashboard(user.role?.name as string)}
+                                    onClick={() => openRoute('dashboard')}
                                     variant={'outline'}
                                     className="hidden sm:inline-flex"
                                 >
@@ -81,20 +64,22 @@ const Navbar = () => {
                                             <p className="text-sm leading-none font-medium">{user.name}</p>
                                             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                                             <Badge variant="secondary" className="w-fit capitalize">
-                                                {user.role?.name || 'Patient'}
+                                                {user.role || 'Patient'}
                                             </Badge>
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem asChild>
-                                        <Link href={route('profile')}>Profile</Link>
-                                    </DropdownMenuItem>
 
-                                    {/* Show Dashboard link only for admin and psychologist */}
-                                    {(user.role?.name === 'admin' || user.role?.name === 'psychologist') && (
-                                        <DropdownMenuItem asChild>
-                                            <Link href={route('filament.patient.pages.dashboard')}>Dashboard</Link>
-                                        </DropdownMenuItem>
+                                    {user && (
+                                        <>
+                                            <DropdownMenuItem onClick={() => openRoute('dashboard')}>
+                                                Dashboard
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem onClick={() => openRoute('profile')}>
+                                                Profile
+                                            </DropdownMenuItem>
+                                        </>
                                     )}
 
                                     <DropdownMenuSeparator />

@@ -3,57 +3,85 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
 import Layout from "@/layouts/layout";
+import { Link, usePage } from "@inertiajs/react";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
+interface Psychologist {
+    id: string;
+    first_name: string;
+    last_name: string;
+    education: string;
+    experience: string;
+    description: string;
+    locations: Location[];
+    specializations: Specialization[];
+}
+
+interface Location {
+    location_name: string;
+}
+
+interface Specialization {
+    specialization_name: string;
+}
 
 export default function PsychologistDetail() {
+    const { props: { psychologist } }: { props: { psychologist: Psychologist } } = usePage();
+
     return (
         <Layout>
-            <div className="max-w-screen-xl mx-auto px-6 xl:px-0 py-20 space-y-6">
+            <div className="max-w-screen-xl mx-auto px-6 xl:px-0 space-y-6">
                 {/* Header Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Left Card */}
                     <Card className="flex flex-col items-center p-6 text-center space-y-4">
                         <div className="w-32 h-32 rounded-full bg-blue-200" />
-                        <p className="text-sm text-gray-600">
-                            Lorem ipsum dolor sit amet consectetur. Ut viverra volutpat velit
-                            vitae vehicula. Lectus varius ut et consequat nunc donec nulla
-                            aliquam.
-                        </p>
-                        <Button>Booking Sesi</Button>
+                        <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                            {psychologist.description}
+                        </ReactMarkdown>
+                        <Button asChild>
+                            <Link href={route('psychologist.book', { id: psychologist.id })}>
+                                Booking Sesi
+                            </Link>
+                        </Button>
                     </Card>
 
                     {/* Info Section */}
                     <div className="md:col-span-2 space-y-4">
-                        <h1 className="text-2xl font-bold">Lorem Ipsum</h1>
+                        <h1 className="text-2xl font-bold">{psychologist.first_name} {psychologist.last_name}</h1>
                         <p className="text-gray-600">Lorem ipsum</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <p className="font-semibold">Location</p>
-                                <p className="text-gray-600">Lorem ipsum</p>
+                                {psychologist.locations.map((location, index) => (
+                                    <p key={index} className="text-gray-600">{location.location_name}</p>
+                                ))}
                             </div>
                             <div className="bg-blue-100 h-16 rounded-lg" />
 
                             <div>
-                                <p className="font-semibold">Specialty</p>
+                                <p className="font-semibold">Specialization</p>
                                 <div className="flex flex-wrap gap-2 mt-1">
-                                    {Array.from({ length: 4 }).map((_, i) => (
-                                        <Badge key={i} variant="secondary">Lorem ipsum</Badge>
+                                    {psychologist.specializations.map((specialization, index) => (
+                                        <Badge key={index} variant="secondary">{specialization.specialization_name}</Badge>
                                     ))}
                                 </div>
                             </div>
 
                             <div>
-                                <p className="font-semibold">Issues</p>
-                                <div className="flex flex-wrap gap-2 mt-1">
-                                    {Array.from({ length: 3 }).map((_, i) => (
-                                        <Badge key={i} variant="secondary">Lorem ipsum</Badge>
-                                    ))}
-                                </div>
+                                <p className="font-semibold">Education</p>
+                                <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                                    {psychologist.education}
+                                </ReactMarkdown>
                             </div>
 
                             <div>
                                 <p className="font-semibold">Experience</p>
-                                <p className="text-gray-600">Lorem ipsum</p>
+                                <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                                    {psychologist.experience}
+                                </ReactMarkdown>
                             </div>
                         </div>
                     </div>
