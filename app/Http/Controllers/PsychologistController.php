@@ -14,7 +14,7 @@ class PsychologistController extends Controller
      */
     public function index()
     {
-        $psychologists = Psychologist::all();
+        $psychologists = Psychologist::paginate(10);
 
         return Inertia::render('psychologist/find/index', [
             'psychologists' => $psychologists
