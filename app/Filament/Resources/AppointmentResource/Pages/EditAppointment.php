@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AppointmentResource\Pages;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\AppointmentResource;
 use App\Models\Review;
 use Filament\Actions;
@@ -23,20 +24,22 @@ class EditAppointment extends EditRecord
 
     protected function afterSave(): void
     {
-        $appointment = $this->record;
-        $user = Auth::user()->load('person');
+        if(Auth::user()->role == UserRole::Patient) {
+            $appointment = $this->record;
+            $user = Auth::user()->load('person');
 
-        // Delete existing review
-        Review::where('appointment_id', $appointment->id)
-            ->delete();
+            // Delete existing review
+            Review::where('appointment_id', $appointment->id)
+                ->delete();
 
 
-        // Create new review
-        Review::create([
-            'appointment_id' => $appointment->id,
-            'reviewer_id'    => $user->person->id,
-            'score'          => $this->form->getState()['score'],
-            'notes'          => $this->form->getState()['notes'],
-        ]);
+            // Create new review
+            Review::create([
+                'appointment_id' => $appointment->id,
+                'reviewer_id'    => $user->person->id,
+                'score'          => $this->form->getState()['score'],
+                'notes'          => $this->form->getState()['notes'],
+            ]);
+        }
     }
 }
