@@ -51,4 +51,8 @@ return [
         'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
         'redirect' => env('FACEBOOK_REDIRECT_URI'),
     ],
+    'starsender' => [
+        'api_key' => env('STARSENDER_API_KEY'),
+        'api_url' => env('STARSENDER_API_URL', 'https://api.starsender.online/api'),
+    ],
 ];
