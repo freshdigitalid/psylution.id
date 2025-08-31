@@ -14,6 +14,16 @@ class Controller
         return Inertia::render('home/index');
     }
 
+    public function about()
+    {
+        return Inertia::render('about/index');
+    }
+
+    public function service()
+    {
+        return Inertia::render('services/index');
+    }
+
     public function dashboard()
     {
         switch (Auth::user()->role) {

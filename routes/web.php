@@ -9,6 +9,12 @@ use Inertia\Inertia;
 Route::get('/', [Controller::class, 'home'])
     ->name('home');
 
+Route::get('/tentang', [Controller::class, 'about'])
+    ->name('about');
+
+Route::get('/layanan-konseling', [Controller::class, 'service'])
+    ->name('services');
+
 Route::get('/cari-psikolog', [PsychologistController::class, 'index'])
     ->name('psychologist.find');
 
