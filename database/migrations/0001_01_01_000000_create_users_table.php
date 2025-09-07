@@ -19,6 +19,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('avatar')->nullable();
             $table->string('password');
+            $table->string('phone_number')->nullable();
+            $table->boolean('is_verified')->default(false);
             $table->enum('role', [UserRole::Admin, UserRole::Psychologist, UserRole::Patient])->default(UserRole::Patient); // Define user roles
             $table->rememberToken();
             $table->softDeletes();

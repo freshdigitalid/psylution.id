@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
         try {
             DB::transaction(function () use ($validated) {
                 $user = User::create([
-                    'name' => $validated['name'],
+                    'name' => $validated['first_name'] . ' ' . $validated['last_name'],
                     'email' => $validated['email'],
                     'phone_number' => $validated['phone_number'],
                     'password' => Hash::make($validated['password']),
@@ -48,9 +48,9 @@ class RegisteredUserController extends Controller
                 ]);
 
                 Patient::create([
-                    'first_name' => $validated['name'],
-                    'last_name'  => $validated['name'],
-                    'dob'        => '1992-03-10',
+                    'first_name' => $validated['first_name'],
+                    'last_name'  => $validated['last_name'],
+                    'dob'        => $validated['dob'],
                     'user_id'    => $user->id,
                 ]);
 
