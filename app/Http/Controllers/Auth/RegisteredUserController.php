@@ -84,7 +84,7 @@ class RegisteredUserController extends Controller
                     // Continue registration even if OTP sending fails
                 }
 
-                Auth::login($user);
+        Auth::login($user);
             });
 
             session([

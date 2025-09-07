@@ -3,11 +3,11 @@ import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { DateInput } from '@/components/ui/date-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { startOfDay } from 'date-fns';
-import { DateInput } from '@/components/ui/date-input';
 
 type RegisterForm = {
     first_name: string;
@@ -103,7 +103,7 @@ export default function Register() {
                         <Label htmlFor="dob">Birthday</Label>
                         <DateInput
                             onChange={(e) => {
-                                setData("dob", startOfDay(e!))
+                                setData('dob', startOfDay(e!));
                             }}
                             value={data.dob}
                             error={errors.dob}
@@ -112,18 +112,19 @@ export default function Register() {
 
                     <div className="grid gap-2">
                         <Label htmlFor="phone">Phone Number</Label>
-                        <div className='relative'>
+                        <div className="relative">
                             <Input
                                 id="phone"
-                                className='peer ps-12'
+                                className="peer ps-12"
                                 type="tel"
                                 inputMode="numeric"
                                 pattern="[0-9]*"
                                 value={data.phone_number}
                                 onChange={(e) => setData('phone_number', e.target.value)}
                                 disabled={processing}
-                                error={errors.phone_number} />
-                            <span className='pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50'>
+                                error={errors.phone_number}
+                            />
+                            <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
                                 +62
                             </span>
                         </div>
@@ -169,10 +170,8 @@ export default function Register() {
 
                 <div className="text-center text-sm text-muted-foreground">
                     Already have an account?{' '}
-                    <Button variant={'link'} asChild tabIndex={6} className='px-0'>
-                        <Link href={route('login')}>
-                            Log in
-                        </Link>
+                    <Button variant={'link'} asChild tabIndex={6} className="px-0">
+                        <Link href={route('login')}>Log in</Link>
                     </Button>
                 </div>
             </form>

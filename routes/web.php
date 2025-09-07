@@ -25,6 +25,9 @@ Route::get('/psikolog-terbaik', function () {
     return Inertia::render('psychologist/best/index');
 })->name('psychologist.best');
 
+Route::get('/testimoni', function () {
+    return Inertia::render('testimoni/index');
+})->name('testimoni');
 
 Route::middleware('auth')->group(function () {
     
