@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { cn } from '@/lib/utils';
 
 interface OtpVerifyProps {
     phone: string;
@@ -119,13 +120,16 @@ export default function OtpVerify({ phone, email }: OtpVerifyProps) {
                                     onChange={(e) => handleOtpChange(index, e.target.value)}
                                     onKeyDown={(e) => handleKeyDown(index, e)}
                                     onPaste={handlePaste}
-                                    className="h-12 w-12 text-center text-lg font-semibold"
+                                    className={cn("h-12 w-12 text-center text-lg font-semibold", {
+                                        'border-red-500': errors.otp
+                                    })}
                                     disabled={processing}
                                 />
                             ))}
                         </div>
-
-                        <div className="text-red-600 dark:text-red-400">{errors.otp}</div>
+                        {errors.otp && (
+                            <div className="text-red-600 dark:text-red-400">{errors.otp}</div>
+                        )}
                     </div>
 
                     <Button type="submit" className="w-full" disabled={processing || otp.join('').length !== 6}>
