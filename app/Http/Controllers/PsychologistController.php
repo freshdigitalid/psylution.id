@@ -12,12 +12,29 @@ class PsychologistController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $psychologists = Psychologist::paginate(10);
+        $q = trim((string) $request->input('q', ''));
+
+        $psychologists = Psychologist::query()
+            ->select(['id', 'first_name', 'last_name', 'education', 'experience', 'description', 'created_at', 'updated_at'])
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('first_name', 'like', "%{$q}%")
+                        ->orWhere('last_name', 'like', "%{$q}%")
+                        ->orWhere('education', 'like', "%{$q}%")
+                        ->orWhere('description', 'like', "%{$q}%");
+                });
+            })
+            ->orderByDesc('created_at')
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('psychologist/find/index', [
-            'psychologists' => $psychologists
+            'psychologists' => $psychologists,
+            'filters' => [
+                'q' => $q,
+            ],
         ]);
     }
 
