@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
         try {
             DB::transaction(function () use ($validated) {
                 $user = User::create([
-                    'name' => $validated['name'],
+                    'name' => $validated['first_name'] . ' ' . $validated['last_name'],
                     'email' => $validated['email'],
                     'phone_number' => $validated['phone_number'],
                     'password' => Hash::make($validated['password']),
@@ -48,9 +48,9 @@ class RegisteredUserController extends Controller
                 ]);
 
                 Patient::create([
-                    'first_name' => $validated['name'],
-                    'last_name'  => $validated['name'],
-                    'dob'        => '1992-03-10',
+                    'first_name' => $validated['first_name'],
+                    'last_name'  => $validated['last_name'],
+                    'dob'        => $validated['dob'],
                     'user_id'    => $user->id,
                 ]);
 
@@ -64,25 +64,25 @@ class RegisteredUserController extends Controller
                     'expires_at' => $expiresAt,
                 ]);
 
-                // Try to send WhatsApp OTP (optional)
-                try {
-                    $phoneNumber = preg_replace('/^0/', '62', $user->phone_number);
-                    $apiKey = config('services.starsender.api_key');
+                // // Try to send WhatsApp OTP (optional)
+                // try {
+                //     $phoneNumber = preg_replace('/^0/', '62', $user->phone_number);
+                //     $apiKey = config('services.starsender.api_key');
 
-                    if ($apiKey) {
-                        Http::withHeaders([
-                            'Authorization' => $apiKey,
-                            'Content-Type' => 'application/json',
-                        ])->post('https://api.starsender.online/api/send', [
-                            'messageType' => 'text',
-                            'to' => $phoneNumber,
-                            'body' => "Kode OTP Psylution Anda adalah: {$otpCode}. Berlaku selama 5 menit. Jangan bagikan kode ini kepada siapapun.",
-                        ]);
-                    }
-                } catch (\Exception $e) {
-                    Log::warning('Failed to send WhatsApp OTP: ' . $e->getMessage());
-                    // Continue registration even if OTP sending fails
-                }
+                //     if ($apiKey) {
+                //         Http::withHeaders([
+                //             'Authorization' => $apiKey,
+                //             'Content-Type' => 'application/json',
+                //         ])->post('https://api.starsender.online/api/send', [
+                //             'messageType' => 'text',
+                //             'to' => $phoneNumber,
+                //             'body' => "Kode OTP Psylution Anda adalah: {$otpCode}. Berlaku selama 5 menit. Jangan bagikan kode ini kepada siapapun.",
+                //         ]);
+                //     }
+                // } catch (\Exception $e) {
+                //     Log::warning('Failed to send WhatsApp OTP: ' . $e->getMessage());
+                //     // Continue registration even if OTP sending fails
+                // }
 
                 Auth::login($user);
             });
