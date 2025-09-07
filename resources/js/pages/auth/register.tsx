@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
-import { format, startOfDay } from 'date-fns';
-import { Calendar } from '@/components/ui/calendar';
+import { startOfDay } from 'date-fns';
 import { DateInput } from '@/components/ui/date-input';
 
 type RegisterForm = {
@@ -24,7 +23,7 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset, transform } = useForm<Required<RegisterForm>>({
         first_name: '',
         last_name: '',
-        dob: new Date(),
+        dob: startOfDay(new Date()),
         email: '',
         password: '',
         password_confirmation: '',
@@ -33,12 +32,12 @@ export default function Register() {
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        
+
         transform((data) => ({
             ...data,
             phone_number: '+62' + data.phone_number.replace(/^0+/, ''),
         }));
-        
+
         post(route('register'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
