@@ -26,4 +26,9 @@ class Package extends BaseModel
     {
         return $this->hasMany(PackageDetail::class);
     }
+
+    public function psychologists()
+    {
+        return $this->belongsToMany(Psychologist::class, 'psychologists_packages', 'package_id', 'psychologist_id');
+    }
 }
