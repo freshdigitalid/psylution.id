@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\UserRole;
 use App\Filament\Resources\PsychologistResource\Pages;
 use App\Filament\Resources\PsychologistResource\RelationManagers;
 use App\Models\Psychologist;
@@ -12,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class PsychologistResource extends Resource
 {
@@ -67,6 +69,23 @@ class PsychologistResource extends Resource
                         ->toolbarButtons([
                             'bulletList'
                         ]),
+
+                    Forms\Components\DatePicker::make('employment_start_date')
+                        ->timezone('Asia/Jakarta')
+                        ->format('Y-m-d H:i:s')
+                        ->displayFormat('F Y')
+                        ->extraInputAttributes(['type' => 'month'])
+                        ->formatStateUsing(fn ($state) => $state
+                            ? \Carbon\Carbon::parse($state)->timezone('Asia/Jakarta')->format('Y-m')
+                            : null
+                        )
+                        ->required(),
+                      
+                    Forms\Components\Select::make('packages')
+                        ->multiple()
+                        ->relationship('packages', 'title')
+                        ->visible(Auth::user()->role !== UserRole::Admin)
+                        ->preload(),
                 ])
         ]);
     }
