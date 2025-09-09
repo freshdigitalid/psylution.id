@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('education')->nullable();
             $table->dateTime('dob');
             $table->string('type');
+            $table->dateTime('employment_start_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
