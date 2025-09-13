@@ -11,7 +11,9 @@ class Psychologist extends Person
     protected $fillable = [
         'experience',
         'education',
-        'employment_start_date'
+        'employment_start_date',
+        'is_online',
+        'is_offline'
     ];
 
     /**

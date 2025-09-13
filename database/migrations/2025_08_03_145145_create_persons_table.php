@@ -24,6 +24,8 @@ return new class extends Migration
             $table->dateTime('dob');
             $table->string('type');
             $table->dateTime('employment_start_date')->nullable();
+            $table->boolean('is_online')->default(false);
+            $table->boolean('is_offline')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
