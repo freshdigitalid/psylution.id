@@ -18,11 +18,16 @@ export const NavMenu = (props: NavigationMenuProps) => (
             <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                     <Link href={route('services')}>Layanan Konseling</Link>
-                </NavigationMenuLink>
+                </NavigationMenuLink> 
             </NavigationMenuItem>
             <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                     <Link href={route('psychologist.find')}>Cari Psikolog</Link>
+                </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                    <Link href={route('testimoni')}>Testimoni</Link>
                 </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
