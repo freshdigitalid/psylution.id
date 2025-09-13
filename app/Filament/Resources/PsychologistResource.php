@@ -84,8 +84,16 @@ class PsychologistResource extends Resource
                     Forms\Components\Select::make('packages')
                         ->multiple()
                         ->relationship('packages', 'title')
-                        ->visible(Auth::user()->role !== UserRole::Admin)
+                        ->visible(Auth::user()->role == UserRole::Admin)
                         ->preload(),
+
+                    Forms\Components\Checkbox::make('is_online')
+                        ->label('Available for Online Consultation?')
+                        ->default(false),
+
+                    Forms\Components\Checkbox::make('is_offline')
+                        ->label('Available for Offline Consultation?')
+                        ->default(false),
                 ])
         ]);
     }

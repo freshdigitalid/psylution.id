@@ -69,6 +69,8 @@ class Profile extends Page implements Forms\Contracts\HasForms
                 'experience'  => $user->person?->experience,
                 'locations' => $user->person?->locations->pluck('id')->toArray() ?? [],
                 'specializations' => $user->person?->specializations->pluck('id')->toArray() ?? [],
+                'is_online'  => $user->person?->is_online,
+                'is_offline'  => $user->person?->is_offline,
             ]);
         }
     }
@@ -129,6 +131,14 @@ class Profile extends Page implements Forms\Contracts\HasForms
                     ->toolbarButtons([
                         'bulletList'
                     ]),
+
+                Forms\Components\Checkbox::make('is_online')
+                    ->label('Available for Online Consultation?')
+                    ->default(false),
+
+                Forms\Components\Checkbox::make('is_offline')
+                    ->label('Available for Offline Consultation?')
+                    ->default(false),
             ];
 
             $schema = array_merge($schema, $psychologistSchema);
@@ -237,6 +247,8 @@ class Profile extends Page implements Forms\Contracts\HasForms
                     'description'  => $data['description'] ?? null,
                     'experience'  => $data['experience'] ?? null,
                     'education'  => $data['education'] ?? null,
+                    'is_online'  => $data['is_online'] ?? false,
+                    'is_offline'  => $data['is_offline'] ?? false,
                 ]
             );
             $user->person->locations()->sync($data['locations'] ?? []);
