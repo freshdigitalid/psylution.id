@@ -51,7 +51,6 @@ export default function PsychologistDetail() {
     return (
         <Layout>
             <div className="mx-auto max-w-screen-xl space-y-6 px-6 xl:px-0">
-
                 {/* Booking Info Section */}
                 <section className="grid grid-cols-1 gap-6 rounded-lg border bg-primary/5 p-6 md:grid-cols-[280px_1fr]">
                     {/* Profile Sidebar */}

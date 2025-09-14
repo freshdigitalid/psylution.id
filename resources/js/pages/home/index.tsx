@@ -8,7 +8,7 @@ import Layout from "@/layouts/layout";
 import StatsBand from "./stats-band";
 import ServicesGrid from "./services-grid";
 import BookNow from "./book-now";
-import WhatTheySay from "./what-they-say";
+// import WhatTheySay from "./what-they-say";
 
 export default function Home() {
   return (
@@ -17,7 +17,7 @@ export default function Home() {
       <StatsBand />
       <ServicesGrid />
       <BookNow />
-      <WhatTheySay />
+      {/* <WhatTheySay /> */}
       <Features />
       <Pricing />
       <FAQ />
