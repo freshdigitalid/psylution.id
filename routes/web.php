@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PsychologistController;
+use App\Http\Controllers\TestimoniController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -25,9 +26,8 @@ Route::get('/psikolog-terbaik', function () {
     return Inertia::render('psychologist/best/index');
 })->name('psychologist.best');
 
-Route::get('/testimoni', function () {
-    return Inertia::render('testimoni/index');
-})->name('testimoni');
+Route::get('/testimoni', [TestimoniController::class, 'index'])
+    ->name('testimoni');
 
 Route::middleware('auth')->group(function () {
     
@@ -36,6 +36,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [Controller::class, 'profile'])
         ->name('profile');
+    
+    Route::post('/profile/avatar', [Controller::class, 'updateAvatar'])
+        ->name('profile.avatar');
 
     Route::middleware('role:patient')->group(function () {
 

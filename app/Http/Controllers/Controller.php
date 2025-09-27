@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Filament\Pages\Dashboard;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class Controller
@@ -40,15 +42,40 @@ class Controller
 
     public function profile()
     {
-        switch (Auth::user()->role) {
-            case UserRole::Admin:
-                return redirect('/admin/profile');
+        $user = Auth::user();
+        
+        return Inertia::render('auth/profile', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone_number' => $user->phone_number,
+                'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+                'created_at' => $user->created_at,
+            ]
+        ]);
+    }
 
-            case UserRole::Psychologist:
-                return redirect('/psychologist/profile');
-                
-            default:
-                return redirect('/patient/profile');
+    public function updateAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = Auth::user();
+        
+        // Delete old avatar if exists
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
         }
+
+        // Store new avatar
+        $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        
+        // Update user avatar
+        $user->update(['avatar' => $avatarPath]);
+
+        // Return redirect for Inertia.js
+        return redirect()->back()->with('success', 'Avatar updated successfully');
     }
 }
