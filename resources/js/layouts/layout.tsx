@@ -7,7 +7,7 @@ interface AppLayoutProps {
     children: ReactNode;
 }
 
-export default ({ children, ...props }: AppLayoutProps) => (
+export default ({ children }: AppLayoutProps) => (
     <>
         <Navbar />
         <main className="py-20 pt-16 xs:pt-20 sm:pt-24">{children}</main>

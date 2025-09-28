@@ -1,11 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Layout from '@/layouts/layout';
 import { Head, router } from '@inertiajs/react';
-import { Calendar, Camera, Edit3, Mail, Phone, Save, X } from 'lucide-react';
+import { Calendar, Camera, Edit3, Eye, EyeOff, Mail, Phone, Save, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -25,6 +26,15 @@ interface ProfilePageProps {
 export default function ProfilePage({ user }: ProfilePageProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [passwordData, setPasswordData] = useState({
+        current_password: '',
+        password: '',
+        password_confirmation: '',
+    });
     const [formData, setFormData] = useState({
         name: user.name,
         email: user.email,
@@ -41,9 +51,16 @@ export default function ProfilePage({ user }: ProfilePageProps) {
     };
 
     const handleSave = () => {
-        // TODO: Implement save functionality
-        console.log('Saving profile:', formData);
-        setIsEditing(false);
+        router.put(route('profile.update'), formData, {
+            onSuccess: () => {
+                toast.success('Profil berhasil diperbarui!');
+                setIsEditing(false);
+            },
+            onError: (errors) => {
+                console.error('Update errors:', errors);
+                toast.error('Gagal memperbarui profil');
+            },
+        });
     };
 
     const handleCancel = () => {
@@ -53,6 +70,43 @@ export default function ProfilePage({ user }: ProfilePageProps) {
             phone_number: user.phone_number || '',
         });
         setIsEditing(false);
+    };
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setPasswordData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handlePasswordSubmit = () => {
+        if (passwordData.password !== passwordData.password_confirmation) {
+            toast.error('Konfirmasi password tidak cocok');
+            return;
+        }
+
+        router.put(route('password.update'), passwordData, {
+            onSuccess: () => {
+                toast.success('Password berhasil diubah!');
+                setShowPasswordModal(false);
+                setPasswordData({
+                    current_password: '',
+                    password: '',
+                    password_confirmation: '',
+                });
+            },
+            onError: (errors) => {
+                console.error('Password update errors:', errors);
+                if (errors.current_password) {
+                    toast.error('Password saat ini salah');
+                } else if (errors.password) {
+                    toast.error('Password baru tidak valid');
+                } else {
+                    toast.error('Gagal mengubah password');
+                }
+            },
+        });
     };
 
     const handleAvatarClick = () => {
@@ -125,15 +179,6 @@ export default function ProfilePage({ user }: ProfilePageProps) {
         });
     };
 
-    const getRoleDisplay = (role: string) => {
-        const roleMap: { [key: string]: string } = {
-            patient: 'Pasien',
-            psychologist: 'Psikolog',
-            admin: 'Administrator',
-        };
-        return roleMap[role] || role;
-    };
-
     return (
         <>
             <Head title="Profile" />
@@ -171,7 +216,6 @@ export default function ProfilePage({ user }: ProfilePageProps) {
                                     </div>
 
                                     <h2 className="text-xl font-semibold">{user.name}</h2>
-                                    {/* <p className="text-sm text-muted-foreground">{getRoleDisplay(user.role)}</p> */}
 
                                     <div className="mt-4 w-full space-y-2">
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -255,11 +299,6 @@ export default function ProfilePage({ user }: ProfilePageProps) {
                                             placeholder="Masukkan nomor telepon"
                                         />
                                     </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="role">Role</Label>
-                                        {/* <Input id="role" value={getRoleDisplay(user.role)} disabled className="bg-muted" /> */}
-                                    </div>
                                 </div>
                             </Card>
 
@@ -280,13 +319,101 @@ export default function ProfilePage({ user }: ProfilePageProps) {
 
                             {/* Action Buttons */}
                             <div className="mt-6 flex flex-wrap gap-3">
-                                <Button variant="outline">Ubah Password</Button>
+                                <Button variant="outline" onClick={() => setShowPasswordModal(true)}>
+                                    Ubah Password
+                                </Button>
                                 <Button variant="outline">Download Data</Button>
                                 <Button variant="destructive">Hapus Akun</Button>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Password Change Modal */}
+                <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Ubah Password</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="current_password">Password Saat Ini</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="current_password"
+                                        name="current_password"
+                                        type={showCurrentPassword ? 'text' : 'password'}
+                                        value={passwordData.current_password}
+                                        onChange={handlePasswordChange}
+                                        placeholder="Masukkan password saat ini"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                    >
+                                        {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="password">Password Baru</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showNewPassword ? 'text' : 'password'}
+                                        value={passwordData.password}
+                                        onChange={handlePasswordChange}
+                                        placeholder="Masukkan password baru"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowNewPassword(!showNewPassword)}
+                                    >
+                                        {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="password_confirmation">Konfirmasi Password Baru</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="password_confirmation"
+                                        name="password_confirmation"
+                                        type={showConfirmPassword ? 'text' : 'password'}
+                                        value={passwordData.password_confirmation}
+                                        onChange={handlePasswordChange}
+                                        placeholder="Konfirmasi password baru"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-2 pt-4">
+                                <Button variant="outline" onClick={() => setShowPasswordModal(false)}>
+                                    Batal
+                                </Button>
+                                <Button onClick={handlePasswordSubmit}>Simpan Password</Button>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
             </Layout>
         </>
     );

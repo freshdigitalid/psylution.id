@@ -78,4 +78,22 @@ class Controller
         // Return redirect for Inertia.js
         return redirect()->back()->with('success', 'Avatar updated successfully');
     }
+
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
+            'phone_number' => 'nullable|string|max:20',
+        ]);
+
+        $user = Auth::user();
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
+        ]);
+
+        return redirect()->back()->with('success', 'Profile updated successfully');
+    }
 }

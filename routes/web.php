@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/profile/avatar', [Controller::class, 'updateAvatar'])
         ->name('profile.avatar');
+    
+    Route::put('/profile', [Controller::class, 'updateProfile'])
+        ->name('profile.update');
 
     Route::middleware('role:patient')->group(function () {
 
