@@ -13,23 +13,30 @@ use Inertia\Inertia;
 
 class AppointmentController extends Controller
 {
-    public function index(string $psychologist_id)
+    public function index(Request $request)
     {
+        $request->validate([
+            'start_date' => ['nullable', 'date', 'after_or_equal:today'],
+        ]);
+
         $user = Auth::user()->load([
             'person' => fn ($query) => $query->select('id', 'user_id', 'first_name', 'last_name', 'dob'),
         ]);
         
         $psychologist = Psychologist::select('id', 'first_name', 'last_name')
             ->with('specializations:specialization_name')
-            ->findOrFail($psychologist_id);
+            ->findOrFail($request->psychologist_id);
             
         $psychologist->specializations->each->makeHidden('pivot');
         
-        $today = Carbon::today('Asia/Jakarta')->setTimezone('UTC'); // current date (00:00:00)
+        $start_date = $request->start_date ?? Carbon::today('Asia/Jakarta')->toDateString();
+
+        // normalize to UTC for DB query
+        $start_date_utc = Carbon::parse($start_date, 'Asia/Jakarta')->setTimezone('UTC');
 
         // get schedules for today + that psychologist
-        $schedule = Schedule::where('psychologist_id', $psychologist_id)
-            ->whereDate('start_time', $today)
+        $schedule = Schedule::where('psychologist_id', $request->psychologist_id)
+            ->whereDate('start_time', $start_date_utc)
             ->first();
 
         $slots = collect();
@@ -39,7 +46,13 @@ class AppointmentController extends Controller
 
             $break_start = $schedule->break_start_time ? Carbon::parse($schedule->break_start_time) : null;
             $break_end   = $schedule->break_end_time ? Carbon::parse($schedule->break_end_time) : null;
-    
+
+            $booked = Appointment::where('psychologist_id', $request->psychologist_id)
+                ->where('start_time', '>=', $start_date_utc)
+                ->where('start_time', '<=', (clone $start_date_utc)->addDay())
+                ->pluck('start_time')
+                ->map(fn($time) => Carbon::parse($time));
+
             while ($start < $end) {
                 $next = (clone $start)->addHour();
     
@@ -50,10 +63,16 @@ class AppointmentController extends Controller
                         continue;
                     }
                 }
-    
+
+                // skip booked slots
+                if ($booked->contains(fn ($b) => $b->equalTo($start))) {
+                    $start = $next;
+                    continue;
+                }
+
                 $slots->push([
-                    'start_time'      => $start,
-                    'end_time'        => $next,
+                    'start_time' => $start,
+                    'end_time'   => $next,
                 ]);
     
                 $start = $next;

@@ -4,11 +4,12 @@ import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import Layout from "@/layouts/layout"
-import { useForm, usePage } from "@inertiajs/react"
+import { router, useForm, usePage } from "@inertiajs/react"
 import { format, startOfDay } from "date-fns"
 import { formatDate } from "@/lib/utils"
 import { SharedData } from "@/types"
 import { Badge } from "@/components/ui/badge"
+import { useEffect } from "react"
 
 interface PsychologistBookingProps extends SharedData {
     psychologist: PsychologistProps;
@@ -70,6 +71,15 @@ export default function PsychologistBooking() {
 
         post(route("appointment.book"));
     }
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('start_date')) {
+            setData("start_time", new Date(params.get('start_date')!))
+            setData("end_time", new Date(params.get('start_date')!))
+        }
+    
+    }, []);
 
     return (
         <Layout>
@@ -157,9 +167,22 @@ export default function PsychologistBooking() {
                                 onSelect={(e) => {
                                     setData("start_time", startOfDay(e!))
                                     setData("end_time", startOfDay(e!))
+                                    router.get(
+                                        route("psychologist.book", psychologist.id), 
+                                        {
+                                            start_date: startOfDay(e!),
+                                        },
+                                        {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        }
+                                    )
                                 }}
                                 className="rounded-md w-full"
                                 required
+                                disabled={[
+                                    { before: new Date() }
+                                ]}
                             />
                             {errors.start_time && (
                                 <div className="text-red-600 text-sm">{errors.start_time}</div>
@@ -171,6 +194,9 @@ export default function PsychologistBooking() {
                     <div>
                         <h3 className="font-medium mb-2">Select Hours</h3>
                         <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                            {schedules.length === 0 && (
+                                <p className="text-sm text-gray-500 col-span-full">No available schedules for the selected date.</p>
+                            )}
                             {schedules.map((s, i) => (
                                 <Button
                                     key={i}
