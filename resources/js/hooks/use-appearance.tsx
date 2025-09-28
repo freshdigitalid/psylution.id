@@ -21,8 +21,10 @@ const setCookie = (name: string, value: string, days = 365) => {
 
 const applyTheme = (appearance: Appearance) => {
     const isDark = appearance === 'dark' || (appearance === 'system' && prefersDark());
-
     document.documentElement.classList.toggle('dark', isDark);
+
+    // Force re-render by adding a data attribute
+    document.documentElement.setAttribute('data-theme', appearance);
 };
 
 const mediaQuery = () => {
@@ -51,6 +53,7 @@ export function useAppearance() {
     const [appearance, setAppearance] = useState<Appearance>('system');
 
     const updateAppearance = useCallback((mode: Appearance) => {
+        console.log('Updating appearance to:', mode);
         setAppearance(mode);
 
         // Store in localStorage for client-side persistence...
