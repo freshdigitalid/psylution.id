@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AvatarProviders\GetAvatarProvider;
 use App\Filament\Pages\Profile;
 use App\Http\Middleware\RedirectToFilamentDashboard;
 use Filament\Http\Middleware\Authenticate;
@@ -69,6 +70,7 @@ class PatientPanelProvider extends PanelProvider
             ])
             ->resources([
                 \App\Filament\Resources\AppointmentResource::class,
-            ]);
+            ])
+            ->defaultAvatarProvider(GetAvatarProvider::class);
     }
 }

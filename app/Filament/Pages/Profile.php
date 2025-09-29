@@ -13,8 +13,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Rule;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class Profile extends Page implements Forms\Contracts\HasForms
 {
@@ -41,8 +43,8 @@ class Profile extends Page implements Forms\Contracts\HasForms
 
         if ($user->role == UserRole::Admin) {
             $this->profileForm->fill([
-                'name'       => $user->name,
-                'email'      => $user->email,
+                'email'   => $user->email,
+                'avatar'  => $user->avatar,
             ]);
         }
 
@@ -54,6 +56,7 @@ class Profile extends Page implements Forms\Contracts\HasForms
                 'last_name'  => $user->person?->last_name,
                 'description'  => $user->person?->description,
                 'dob'  => $user->person?->dob,
+                'avatar'  => $user->avatar,
             ]);
         }
 
@@ -71,6 +74,7 @@ class Profile extends Page implements Forms\Contracts\HasForms
                 'specializations' => $user->person?->specializations->pluck('id')->toArray() ?? [],
                 'is_online'  => $user->person?->is_online,
                 'is_offline'  => $user->person?->is_offline,
+                'avatar'  => $user->avatar,
             ]);
         }
     }
@@ -78,9 +82,31 @@ class Profile extends Page implements Forms\Contracts\HasForms
     private function getSchema(): array
     {
         $schema = [
-            Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
+            Forms\Components\FileUpload::make('avatar')
+                ->image()
+                ->imageEditor()
+                ->circleCropper()
+                ->directory('avatars')
+                ->moveFiles()
+                ->columnSpanFull()
+                ->imageEditorAspectRatios(['1:1'])
+                ->afterStateUpdated(function ($state) {
+                    if (! $state instanceof TemporaryUploadedFile) return;
+                    
+                    // Delete old avatar if exists
+                    $oldAvatar = Auth::user()->avatar;
+                    if ($oldAvatar && Storage::exists($oldAvatar)) {
+                        Storage::delete($oldAvatar);
+                    }
+                }),
+
+            Forms\Components\TextInput::make('first_name')
+                ->maxLength(255)
+                ->required(),
+
+            Forms\Components\TextInput::make('last_name')
+                ->maxLength(255)
+                ->required(),
 
             Forms\Components\TextInput::make('email')
                 ->email()
@@ -91,14 +117,6 @@ class Profile extends Page implements Forms\Contracts\HasForms
 
         if (Auth::user()->role == UserRole::Psychologist) {
             $psychologistSchema = [
-                Forms\Components\TextInput::make('first_name')
-                    ->maxLength(255)
-                    ->required(),
-
-                Forms\Components\TextInput::make('last_name')
-                    ->maxLength(255)
-                    ->required(),
-
                 Forms\Components\DatePicker::make('dob')
                     ->label('Birthday')
                     ->format('Y-m-d H:i:s')
@@ -223,8 +241,9 @@ class Profile extends Page implements Forms\Contracts\HasForms
         $user = Auth::user();
 
         $user->update([
-            'name'  => $data['name'],
+            'name'  => $data['first_name'] . ' ' . $data['last_name'],
             'email' => $data['email'],
+            'avatar'  => $data['avatar'] ?? null,
         ]);
 
         if ($user->person instanceof Patient) {
