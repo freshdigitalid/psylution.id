@@ -4,16 +4,17 @@ import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import Layout from "@/layouts/layout"
-import { useForm, usePage } from "@inertiajs/react"
-import { Label } from "@/components/ui/label"
+import { router, useForm, usePage } from "@inertiajs/react"
 import { format, startOfDay } from "date-fns"
 import { formatDate } from "@/lib/utils"
 import { SharedData } from "@/types"
 import { Badge } from "@/components/ui/badge"
+import { useEffect } from "react"
 
 interface PsychologistBookingProps extends SharedData {
     psychologist: PsychologistProps;
     patient: PatientProps;
+    schedules: ScheduleProps[];
 }
 
 interface PsychologistProps {
@@ -34,9 +35,14 @@ interface SpecializationProps {
     specialization_name: string;
 }
 
+interface ScheduleProps {
+    start_time: string;
+    end_time: string;
+}
+
 
 export default function PsychologistBooking() {
-    const { psychologist, patient } = usePage<PsychologistBookingProps>().props;
+    const { psychologist, patient, schedules } = usePage<PsychologistBookingProps>().props;
 
     interface Data {
         psychologist_id: string;
@@ -54,18 +60,6 @@ export default function PsychologistBooking() {
         end_time: undefined,
     });
 
-
-    function handleTimePicker(input_name: keyof Data, e: React.ChangeEvent<HTMLInputElement>) {
-        var time = e.target.value!;
-        const [hours, minutes] = time.split(":").map(Number);
-
-        const updatedDate = data[input_name] as Date;
-        updatedDate.setHours(hours);
-        updatedDate.setMinutes(minutes);
-
-        setData(input_name, updatedDate);
-    }
-
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -78,8 +72,14 @@ export default function PsychologistBooking() {
         post(route("appointment.book"));
     }
 
-    const dob = new Date(patient.dob);
-    const formattedDob = format(new Date(patient.dob), 'dd-MM-yyyy');
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('start_date')) {
+            setData("start_time", new Date(params.get('start_date')!))
+            setData("end_time", new Date(params.get('start_date')!))
+        }
+    
+    }, []);
 
     return (
         <Layout>
@@ -167,9 +167,22 @@ export default function PsychologistBooking() {
                                 onSelect={(e) => {
                                     setData("start_time", startOfDay(e!))
                                     setData("end_time", startOfDay(e!))
+                                    router.get(
+                                        route("psychologist.book", psychologist.id), 
+                                        {
+                                            start_date: startOfDay(e!),
+                                        },
+                                        {
+                                            preserveState: true,
+                                            preserveScroll: true,
+                                        }
+                                    )
                                 }}
                                 className="rounded-md w-full"
                                 required
+                                disabled={[
+                                    { before: new Date() }
+                                ]}
                             />
                             {errors.start_time && (
                                 <div className="text-red-600 text-sm">{errors.start_time}</div>
@@ -180,40 +193,25 @@ export default function PsychologistBooking() {
                     {/* Hours */}
                     <div>
                         <h3 className="font-medium mb-2">Select Hours</h3>
-                        <div className="grid grid-cols-4 gap-3">
-
-                            <div className='flex flex-col gap-3 col-span-2'>
-                                <Label htmlFor='time-from' className='px-1'>
-                                    From
-                                </Label>
-                                <Input
-                                    className='bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none'
-                                    type='time'
-                                    id='time-from'
-                                    step='1'
-                                    defaultValue='00:00:00'
-                                    onChange={(e) => handleTimePicker("start_time", e)}
-                                    required
-                                    disabled={!data.start_time}
-                                    error={errors.start_time}
-                                />
-                            </div>
-                            <div className='flex flex-col gap-3 col-span-2'>
-                                <Label htmlFor='time-to' className='px-1'>
-                                    To
-                                </Label>
-                                <Input
-                                    className='bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none'
-                                    type='time'
-                                    id='time-to'
-                                    step='1'
-                                    defaultValue='00:00:00'
-                                    onChange={(e) => handleTimePicker("end_time", e)}
-                                    required
-                                    disabled={!data.end_time}
-                                    error={errors.end_time}
-                                />
-                            </div>
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                            {schedules.length === 0 && (
+                                <p className="text-sm text-gray-500 col-span-full">No available schedules for the selected date.</p>
+                            )}
+                            {schedules.map((s, i) => (
+                                <Button
+                                    key={i}
+                                    type="button"
+                                    variant={new Date(s.start_time).toISOString() === data.start_time?.toISOString() 
+                                        ? 'default' 
+                                        : 'outline'
+                                    }
+                                    onClick={(e) => {
+                                        setData("start_time", new Date(s.start_time))
+                                        setData("end_time", new Date(s.end_time))
+                                    }}>
+                                    {new Date(s.start_time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })} - {new Date(s.end_time).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                                </Button>
+                            ))}
                         </div>
                     </div>
 
