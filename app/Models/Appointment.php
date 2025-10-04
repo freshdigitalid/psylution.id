@@ -48,4 +48,9 @@ class Appointment extends BaseModel implements AuditableContract
     {
         return $this->hasOne(Review::class);
     }
+
+    public function order()
+    {
+        return $this->hasOne(AppointmentOrder::class);
+    }
 }
