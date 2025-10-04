@@ -16,7 +16,8 @@
         "mokhosh/filament-rating": "^1.4",
         "owen-it/laravel-auditing": "^14.0",
         "tightenco/parental": "^1.4",
-        "tightenco/ziggy": "^2.4"
+        "tightenco/ziggy": "^2.4",
+        "xendit/xendit-php": "^7.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
