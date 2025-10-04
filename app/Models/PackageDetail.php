@@ -23,4 +23,9 @@ class PackageDetail extends BaseModel
     {
         return $this->belongsTo(Package::class);
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 }
