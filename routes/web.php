@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PsychologistController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,5 +47,9 @@ Route::middleware('auth')->group(function () {
             ->name('appointment.book');
     });
 });
+
+Route::withoutMiddleware([VerifyCsrfToken::class])
+    ->post('/booking/callback', [AppointmentController::class, 'callback'])
+    ->name('appointment.callback');
 
 require __DIR__ . '/auth.php';
