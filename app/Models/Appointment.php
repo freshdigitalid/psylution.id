@@ -20,6 +20,7 @@ class Appointment extends BaseModel implements AuditableContract
         'status',
         'meet_url',
         'diagnosis',
+        'package_detail_id',
     ];
 
     /**
@@ -52,5 +53,10 @@ class Appointment extends BaseModel implements AuditableContract
     public function order()
     {
         return $this->hasOne(AppointmentOrder::class);
+    }
+
+    public function package_detail()
+    {
+        return $this->belongsTo(PackageDetail::class);
     }
 }

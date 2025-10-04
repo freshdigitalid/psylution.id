@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import Layout from "@/layouts/layout"
@@ -15,6 +15,7 @@ interface PsychologistBookingProps extends SharedData {
     psychologist: PsychologistProps;
     patient: PatientProps;
     schedules: ScheduleProps[];
+    packages: PackageProps[];
 }
 
 interface PsychologistProps {
@@ -35,6 +36,12 @@ interface SpecializationProps {
     specialization_name: string;
 }
 
+interface PackageProps {
+    id: string;
+    title: string;
+    price: number;
+}
+
 interface ScheduleProps {
     start_time: string;
     end_time: string;
@@ -42,7 +49,7 @@ interface ScheduleProps {
 
 
 export default function PsychologistBooking() {
-    const { psychologist, patient, schedules } = usePage<PsychologistBookingProps>().props;
+    const { psychologist, patient, schedules, packages } = usePage<PsychologistBookingProps>().props;
 
     interface Data {
         psychologist_id: string;
@@ -50,6 +57,7 @@ export default function PsychologistBooking() {
         complaints: string;
         start_time: Date | undefined;
         end_time: Date | undefined;
+        package_detail_id: string | undefined;
     }
 
     const { data, setData, post, errors, transform, processing } = useForm<Data>({
@@ -58,6 +66,7 @@ export default function PsychologistBooking() {
         complaints: '',
         start_time: undefined,
         end_time: undefined,
+        package_detail_id: undefined,
     });
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -133,14 +142,40 @@ export default function PsychologistBooking() {
                                     <Button
                                         type="button"
                                         variant={!data.is_online ? "default" : "outline"}
-                                        onClick={(e) => setData("is_online", false)}
+                                        onClick={(e) => {
+                                            setData("is_online", false)
+                                            router.get(
+                                                route("psychologist.book", psychologist.id),
+                                                {
+                                                    is_online: false,
+                                                    start_date: data.start_time ? startOfDay(data.start_time) : undefined,
+                                                },
+                                                {
+                                                    preserveState: true,
+                                                    preserveScroll: true,
+                                                }
+                                            )
+                                        }}
                                     >
                                         Offline
                                     </Button>
                                     <Button
                                         type="button"
                                         variant={data.is_online ? "default" : "outline"}
-                                        onClick={(e) => setData("is_online", true)}
+                                        onClick={(e) => {
+                                            setData("is_online", true)
+                                            router.get(
+                                                route("psychologist.book", psychologist.id),
+                                                {
+                                                    is_online: true,
+                                                    start_date: data.start_time ? startOfDay(data.start_time) : undefined,
+                                                },
+                                                {
+                                                    preserveState: true,
+                                                    preserveScroll: true,
+                                                }
+                                            )
+                                        }}
                                     >
                                         Online
                                     </Button>
@@ -157,6 +192,37 @@ export default function PsychologistBooking() {
                         </div>
                     </div>
 
+                    {/* Package */}
+                    <div>
+                        <h3 className="font-medium mb-2">Select Package</h3>
+                        <div className="flex gap-2">
+                            {packages.length === 0 && (
+                                <p className="text-sm text-gray-500 col-span-full">No available package for this psychology.</p>
+                            )}
+                            {packages.map((s, i) => (
+                                <Button
+                                    key={i}
+                                    type="button"
+                                    className="h-full"
+                                    onClick={(e) => setData("package_detail_id", s.id)}
+                                    variant={data.package_detail_id === s.id
+                                        ? 'default' 
+                                        : 'outline'
+                                    } 
+                                    asChild>
+                                    <Card className="p-4">
+                                        <CardHeader>
+                                        <CardTitle>{s.title}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p>Rp {s.price?.toLocaleString('id-ID')}</p>
+                                        </CardContent>
+                                    </Card>
+                                </Button>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Date picker */}
                     <div>
                         <h3 className="font-medium mb-2">Select Date</h3>
@@ -170,6 +236,7 @@ export default function PsychologistBooking() {
                                     router.get(
                                         route("psychologist.book", psychologist.id), 
                                         {
+                                            is_online: data.is_online,
                                             start_date: startOfDay(e!),
                                         },
                                         {

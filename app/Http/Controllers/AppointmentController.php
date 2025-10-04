@@ -6,6 +6,7 @@ use App\Enums\AppointmentStatus;
 use App\Enums\PaymentStatus;
 use App\Models\Appointment;
 use App\Models\AppointmentOrder;
+use App\Models\PackageDetail;
 use App\Models\Psychologist;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
@@ -39,11 +40,11 @@ class AppointmentController extends Controller
         ]);
         
         $psychologist = Psychologist::select('id', 'first_name', 'last_name')
-            ->with('specializations:specialization_name')
+            ->with(['specializations:specialization_name', 'packages:id'])
             ->findOrFail($request->psychologist_id);
-            
+
         $psychologist->specializations->each->makeHidden('pivot');
-        
+
         $start_date = $request->start_date ?? Carbon::today('Asia/Jakarta')->toDateString();
 
         // normalize to UTC for DB query
@@ -70,7 +71,7 @@ class AppointmentController extends Controller
 
             while ($start < $end) {
                 $next = (clone $start)->addHour();
-    
+
                 // skip break
                 if ($break_start && $break_end) {
                     if ($start >= $break_start && $next <= $break_end) {
@@ -89,15 +90,28 @@ class AppointmentController extends Controller
                     'start_time' => $start,
                     'end_time'   => $next,
                 ]);
-    
+
                 $start = $next;
             }
         }
 
+        // Get package details that match is_online and belong to psychologist's packages
+        $package_ids = $psychologist->packages->pluck('id');
+        $package_details = \App\Models\PackageDetail::query()
+            ->select('id', 'title', 'price')
+            ->whereIn('package_id', $package_ids)
+            ->when($request->has('is_online'), function ($query) use ($request) {
+                $query->where('is_online', $request->is_online);
+            }, function ($query) {
+                $query->where('is_online', false);
+            })
+            ->get();
+
         return Inertia::render('psychologist/book/index', [
             'psychologist' => $psychologist,
             'patient' => $user->person,
-            'schedules' => $slots
+            'schedules' => $slots,
+            'packages' => $package_details,
         ]);
     }
 
@@ -106,17 +120,18 @@ class AppointmentController extends Controller
         $request->validate([
             'psychologist_id' => ['required', 'uuid', 'exists:persons,id'],
             'is_online'       => ['required', 'boolean'],
-            'complaints'      => ['required', 'string', 'max:1000'],
             'start_time'      => ['required', 'date', 'after_or_equal:now'],
             'end_time'        => ['required', 'date', 'after:start_time'],
+            'package_detail_id' => ['required', 'uuid', 'exists:package_details,id'],
         ]);
 
         try {
+            $detail = PackageDetail::findOrFail($request->package_detail_id);
             // Create invoice request object
             $createInvoiceRequest = new CreateInvoiceRequest([
                 'external_id' => 'inv-' . time(),
-                'description' => "Pembelian Psylution", //"Pembelian {$product->name}",
-                'amount' => 10000,//$product->price,
+                'description' => "Pembelian {$detail->title}", //"Pembelian {$product->name}",
+                'amount' => $detail->price,//$product->price,
                 'invoice_duration' => 86400,
                 'currency' => 'IDR',
                 'reminder_time' => 1,
@@ -149,6 +164,7 @@ class AppointmentController extends Controller
                     'complaints' => $request->complaints,
                     'is_online' => $request->is_online,
                     'status' => AppointmentStatus::Pending,
+                    'package_detail_id' => $request->package_detail_id,
                 ]
             ]);
 
@@ -181,6 +197,7 @@ class AppointmentController extends Controller
                         'start_time' => $order->data['start_time'],
                         'end_time' => $order->data['end_time'],
                         'complaints' => $order->data['complaints'],
+                        'package_detail_id' => $order->data['package_detail_id'],
                         'is_online' => $order->data['is_online'],
                         'status' => AppointmentStatus::Pending,
                     ]);
