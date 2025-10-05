@@ -3,11 +3,8 @@
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\PsychologistController;
-<<<<<<< HEAD
 use App\Http\Controllers\TestimoniController;
-=======
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
->>>>>>> 0c673c227b82fe87fc02805e4c7fd6ec23be37eb
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
