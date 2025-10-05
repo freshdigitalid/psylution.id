@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AvatarProviders\GetAvatarProvider;
 use App\Filament\Pages\Profile;
 use App\Http\Middleware\RedirectToFilamentDashboard;
 use Filament\Http\Middleware\Authenticate;
@@ -63,6 +64,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profile')
                     ->icon('heroicon-o-user-circle')
                     ->url(static fn(): string => route(Profile::getRouteName(panel: 'admin'))),
-            ]);;
+            ])
+            ->defaultAvatarProvider(GetAvatarProvider::class);
     }
 }

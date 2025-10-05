@@ -55,4 +55,8 @@ return [
         'api_key' => env('STARSENDER_API_KEY'),
         'api_url' => env('STARSENDER_API_URL', 'https://api.starsender.online/api'),
     ],
+    'xendit' => [
+        'secret_key' => env('XENDIT_SECRET_KEY'),
+        'webhook_secret' => env('XENDIT_WEBHOOK_SECRET'),
+    ],
 ];

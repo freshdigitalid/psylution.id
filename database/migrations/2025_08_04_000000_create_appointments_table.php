@@ -18,6 +18,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('psychologist_id');
             $table->uuid('patient_id');
+            $table->uuid('package_detail_id');
             $table->dateTime('start_time');
             $table->dateTime('end_time');
             $table->text('complaints')->nullable();
@@ -30,6 +31,7 @@ return new class extends Migration
 
             $table->foreign('psychologist_id')->references('id')->on('persons');
             $table->foreign('patient_id')->references('id')->on('persons');
+            $table->foreign('package_detail_id')->references('id')->on('package_details');
         });
     }
 
