@@ -15,7 +15,6 @@ class PatientUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create John Doe
         $john = User::create([
             'name' => 'John Doe',
             'email' => 'john.doe@example.com',

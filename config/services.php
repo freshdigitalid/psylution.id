@@ -59,4 +59,22 @@ return [
         'secret_key' => env('XENDIT_SECRET_KEY'),
         'webhook_secret' => env('XENDIT_WEBHOOK_SECRET'),
     ],
+    'zoom' => [
+        'api_key' => env('ZOOM_API_KEY'),
+        'api_secret' => env('ZOOM_API_SECRET'),
+        'account_id' => env('ZOOM_ACCOUNT_ID'),
+        'client_secret' => env('ZOOM_CLIENT_SECRET'),
+        'user_id' => env('ZOOM_USER_ID', 'me'),
+    ],
+    'google_meet' => [
+        'access_token' => env('GOOGLE_MEET_ACCESS_TOKEN'),
+        'client_id' => env('GOOGLE_MEET_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_MEET_CLIENT_SECRET'),
+    ],
+    'video_conference' => [
+        'provider' => env('VIDEO_CONFERENCE_PROVIDER', 'zoom'), 
+    ],
+    'payment_gateway' => [
+        'provider' => env('PAYMENT_GATEWAY_PROVIDER', 'xendit'), // 'xendit' or other providers
+    ],
 ];

@@ -22,32 +22,50 @@ export const TestimonialPagination: React.FC<TestimonialPaginationProps> = ({
 }) => {
   const getVisiblePages = () => {
     const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
+    const pages: (number | string)[] = [];
 
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
-      range.push(i);
+    // Always show first page
+    pages.push(1);
+
+    // Calculate start and end of middle range
+    let start = Math.max(2, currentPage - delta);
+    let end = Math.min(totalPages - 1, currentPage + delta);
+
+    // Add ellipsis before if needed
+    if (start > 2) {
+      pages.push('...');
     }
 
-    if (currentPage - delta > 2) {
-      rangeWithDots.push(1, '...');
-    } else {
-      rangeWithDots.push(1);
+    // Add middle range pages (exclude first and last if they're already added)
+    for (let i = start; i <= end; i++) {
+      if (i !== 1 && i !== totalPages) {
+        pages.push(i);
+      }
     }
 
-    rangeWithDots.push(...range);
-
-    if (currentPage + delta < totalPages - 1) {
-      rangeWithDots.push('...', totalPages);
-    } else if (totalPages > 1) {
-      rangeWithDots.push(totalPages);
+    // Add ellipsis after if needed
+    if (end < totalPages - 1) {
+      pages.push('...');
     }
 
-    return rangeWithDots;
+    // Always show last page (if more than 1 page total)
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    // Remove duplicates while preserving order
+    const uniquePages: (number | string)[] = [];
+    const seen = new Set<string | number>();
+    
+    pages.forEach(page => {
+      const key = typeof page === 'string' ? `ellipsis_${uniquePages.filter(p => p === '...').length}` : page;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniquePages.push(page);
+      }
+    });
+
+    return uniquePages;
   };
 
   if (totalPages <= 1) return null;
@@ -69,7 +87,7 @@ export const TestimonialPagination: React.FC<TestimonialPaginationProps> = ({
         </PaginationItem>
 
         {getVisiblePages().map((page, index) => (
-          <PaginationItem key={index}>
+          <PaginationItem key={`page-${typeof page === 'string' ? `ellipsis-${index}` : page}`}>
             {page === '...' ? (
               <PaginationEllipsis />
             ) : (
