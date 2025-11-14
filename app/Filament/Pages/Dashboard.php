@@ -17,4 +17,4 @@ class Dashboard extends BaseDashboard
             DashboardStats::class,
         ];
     }
-} 
+}

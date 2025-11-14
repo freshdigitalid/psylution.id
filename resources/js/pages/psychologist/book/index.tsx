@@ -144,11 +144,12 @@ export default function PsychologistBooking() {
                                         variant={!data.is_online ? "default" : "outline"}
                                         onClick={(e) => {
                                             setData("is_online", false)
+                                            const dateString = data.start_time ? format(startOfDay(data.start_time), 'yyyy-MM-dd') : undefined;
                                             router.get(
                                                 route("psychologist.book", psychologist.id),
                                                 {
                                                     is_online: false,
-                                                    start_date: data.start_time ? startOfDay(data.start_time) : undefined,
+                                                    start_date: dateString,
                                                 },
                                                 {
                                                     preserveState: true,
@@ -164,11 +165,12 @@ export default function PsychologistBooking() {
                                         variant={data.is_online ? "default" : "outline"}
                                         onClick={(e) => {
                                             setData("is_online", true)
+                                            const dateString = data.start_time ? format(startOfDay(data.start_time), 'yyyy-MM-dd') : undefined;
                                             router.get(
                                                 route("psychologist.book", psychologist.id),
                                                 {
                                                     is_online: true,
-                                                    start_date: data.start_time ? startOfDay(data.start_time) : undefined,
+                                                    start_date: dateString,
                                                 },
                                                 {
                                                     preserveState: true,
@@ -231,13 +233,17 @@ export default function PsychologistBooking() {
                                 mode="single"
                                 selected={data.start_time ? new Date(data.start_time) : new Date()}
                                 onSelect={(e) => {
-                                    setData("start_time", startOfDay(e!))
-                                    setData("end_time", startOfDay(e!))
+                                    const selectedDate = startOfDay(e!);
+                                    setData("start_time", selectedDate)
+                                    setData("end_time", selectedDate)
+                                    
+                                    const dateString = format(selectedDate, 'yyyy-MM-dd');
+                                    
                                     router.get(
                                         route("psychologist.book", psychologist.id), 
                                         {
                                             is_online: data.is_online,
-                                            start_date: startOfDay(e!),
+                                            start_date: dateString,
                                         },
                                         {
                                             preserveState: true,

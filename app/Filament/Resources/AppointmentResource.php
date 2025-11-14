@@ -129,7 +129,8 @@ class AppointmentResource extends Resource
                             ->label('Meet Url')
                             ->url()
                             ->visible(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
-                            ->required(fn($get) => $get('status') == AppointmentStatus::Approved->value && $get('is_online'))
+                            ->disabled(fn($record) => !empty($record?->meet_url)) // Disable if already generated
+                            ->helperText(fn($record) => !empty($record?->meet_url) ? 'Meeting link akan otomatis dibuat ketika appointment di-approve' : 'Link meeting akan otomatis dibuat saat appointment di-approve')
                             ->columnSpanFull(),
 
                         Forms\Components\Textarea::make('diagnosis')
